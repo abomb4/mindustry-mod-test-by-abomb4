@@ -24,7 +24,7 @@ const silo = extendContent(Block, "scatter-silo", {
         if (Vars.net.client()) {
             Call.onAdminRequest(Vars.player, Packages.mindustry.net.Packets.AdminAction.wave);
         } else {
-            state.wavetime = 0;
+            Vars.state.wavetime = 0;
         }
     }
 })

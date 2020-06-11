@@ -278,7 +278,8 @@ pointingLaserBulletType.smokeEffect = Fx.shootSmallSmoke;
 pointingLaserBulletType.hitEffect = sql;
 // 消失效果
 pointingLaserBulletType.despawnEffect = sql;
-
+pointingLaserBulletType.fragBullet = Bullets.meltdownLaser;
+pointingLaserBulletType.fragBullets = 12;
 // -= 炮塔 =-
 // 发射声音
 // pointingLaserTurret.shootSound = Sounds.laser;
