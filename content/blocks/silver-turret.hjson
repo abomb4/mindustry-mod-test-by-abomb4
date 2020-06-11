@@ -1,0 +1,16 @@
+
+localizedName: "爆裂激光"
+description: "用极高的热量，精准打击敌方，甚至能融化敌方装甲，爆炸出高温弹片继续灼烧敌人。，\n造成 300 点直接伤害，100 点范围伤害，5 格范围."
+health: 200
+size: 1
+reload: 60
+range: 300
+ammoUseEffect: shellEjectSmall
+inaccuracy: 0
+rotatespeed: 122
+powerUse: 0.1
+requirements: [
+  copper/70
+]
+category: turret
+research: duo

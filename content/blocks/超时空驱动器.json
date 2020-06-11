@@ -1,0 +1,25 @@
+{
+  "name": "超时空驱动器",
+  "description": "素帕塞牙紧",
+  "health": 500,
+  "size": 3,
+  "itemCapacity": 300,
+  "range": 650,
+  "rotateSpeed": 0.05,
+  "translation": 10,
+  "minDistribute": 75,
+  "knockback": 6,
+  "reloadTime": 120,
+  "shootEffect": "shootBig2",
+  "smokeEffect": "shootBigSmoke2",
+  "recieveEffect": "mineBig",
+  "shake": 10,
+  "consumes": {
+    "power": 4.0
+  },
+  "requirements": [
+    { "item": "copper", "amount": 1 }
+  ],
+  "category": "distribution",
+  "research": "mass-driver"
+}
