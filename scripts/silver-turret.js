@@ -1,4 +1,21 @@
 
+function loadSound(name, setter) {
+    const params = new Packages.arc.assets.loaders.SoundLoader.SoundParameter();
+    params.loadedCallback = new Packages.arc.assets.AssetLoaderParameters.LoadedCallback({
+        finishedLoading(asset, str, cls) {
+            print('1 load sound ' + name + ' from arc');
+            setter(asset.get(str, cls));
+        }
+    });
+
+    Core.assets.load("sounds/" + name, Packages.arc.audio.Sound, params).loaded = new Cons({
+        get(a) {
+            print('2 load sound ' + name + ' from arc');
+            setter(a);
+        }
+    });
+}
+
 /**
  * 指向性激光效果，创建效果时必须在 data 里实现 getX(), getY() ，代表目标位置
  */
@@ -108,6 +125,7 @@ const pointingLaserTurret = extendContent(PowerTurret, "silver-turret", {
     chargeTime: 60,
     cooldownDelay: 60,
     chargeSound: Sounds.shotgun,
+    shootType: pointingLaserBulletType,
 
     update(tile) {
         this.super$update(tile);
@@ -245,7 +263,6 @@ pointingLaserTurret.chargeBeginEffect = Fx.lancerLaserChargeBegin;
 pointingLaserTurret.shootEffect = Fx.lancerLaserShoot;
 pointingLaserTurret.smokeEffect = Fx.lancerLaserShootSmoke;
 
-
 // -=-=-常用属性 -=-=-
 // -= 子弹 =-
 // 直接伤害
@@ -265,9 +282,11 @@ pointingLaserBulletType.despawnEffect = sql;
 
 // -= 炮塔 =-
 // 发射声音
-pointingLaserTurret.shootSound = Sounds.laser;
+// pointingLaserTurret.shootSound = Sounds.laser;
 // 充能声音
-pointingLaserTurret.chargeSound = Sounds.shotgun;
+// pointingLaserTurret.chargeSound = "s.ogg";
+loadSound("s.ogg", s => pointingLaserTurret.chargeSound = s);
+loadSound("b.ogg", s => pointingLaserTurret.shootSound = s);
 // 充能时间 60 = 1s
 pointingLaserTurret.chargeTime = 60;
 // 丢失目标的缓冲时间，不能大于 chargeTime， 60 = 1s
