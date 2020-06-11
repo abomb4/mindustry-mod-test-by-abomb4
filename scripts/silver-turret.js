@@ -51,7 +51,6 @@ const pointingLaserBulletType = extend(BasicBulletType, {
             var sourceX = b.data.getSourceX();
             var sourceY = b.data.getSourceY();
 
-            var explosiveness = 20; // 10 damage
             // 正向激光
             Effects.effect(pointingLaserEffect, Color.red,
                 b.data.getSourceX(),
@@ -73,7 +72,7 @@ const pointingLaserBulletType = extend(BasicBulletType, {
 
             // 爆炸效果自行实现
             // 先炸出冲击波
-            var shake = Math.min(explosiveness / 4 + 3, 9);
+            var shake = 1;
             Effects.shake(shake, shake, targetX, targetY);
             Effects.effect(Fx.shockwave, targetX, targetY);
 
