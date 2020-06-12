@@ -101,7 +101,7 @@ const pointingLaserSubBulletType = extend(BasicBulletType, {
 pointingLaserSubBulletType.speed = 0.01;
 pointingLaserSubBulletType.hitSize = 20;
 pointingLaserSubBulletType.lifetime = 1;
-pointingLaserSubBulletType.pierce = false;
+pointingLaserSubBulletType.pierce = true;
 pointingLaserSubBulletType.collidesTiles = false;
 pointingLaserSubBulletType.collidesTeam = false;
 pointingLaserSubBulletType.collidesAir = false;
@@ -113,9 +113,13 @@ pointingLaserSubBulletType.shootEffect = sql;
 pointingLaserSubBulletType.smokeEffect = Fx.shootSmallSmoke;
 pointingLaserSubBulletType.hitEffect = sql;
 pointingLaserSubBulletType.despawnEffect = sql;
+// pointingLaserSubBulletType.fragBullet = Bullets.lancerLaser;
+// pointingLaserSubBulletType.fragBullets = 12;
 
 /** 指向性激光子弹，发射该类子弹必须指定 data ，目前只能使用 PointingLaserTurret 发射 */
 const pointingLaserBulletType = extend(BasicBulletType, {
+    splashRadius: 80,
+    splashTotal: 5,
     update(b) {
         // 不进行向量移动，进行一次打击
         if (!b.data.hit) {
@@ -163,8 +167,8 @@ const pointingLaserBulletType = extend(BasicBulletType, {
         Puddle.deposit(Vars.world.tileWorld(x, y), Liquids.cryofluid, 800);
 
         // Find targets on radius
-        const splashRadius = 120;
-        const splashTotal = 5;
+        const splashRadius = this.splashRadius;
+        const splashTotal = this.splashTotal;
         var splashCount = 0;
         const shootTo = (tx, ty) => {
             if (splashCount < splashTotal) {
@@ -185,10 +189,11 @@ const pointingLaserBulletType = extend(BasicBulletType, {
             }
         };
         var first = true;
+        // 找敌人，建筑找不到不管了
         Units.nearbyEnemies(Vars.player.getTeam(), x, y, splashRadius, splashRadius, new Cons({
             get(v) {
                 if (!first) {
-                    shootTo(v.x, v.y);
+                    shootTo(v.getX(), v.getY());
                 }
                 first = false;
             },
@@ -208,7 +213,7 @@ const pointingLaserBulletType = extend(BasicBulletType, {
 pointingLaserBulletType.speed = 0.01;
 pointingLaserBulletType.hitSize = 20;
 pointingLaserBulletType.lifetime = 1;
-pointingLaserBulletType.pierce = false;
+pointingLaserBulletType.pierce = true;
 pointingLaserBulletType.collidesTiles = false;
 pointingLaserBulletType.collidesTeam = false;
 pointingLaserBulletType.collidesAir = false;
@@ -405,7 +410,7 @@ pointingLaserBulletType.smokeEffect = Fx.shootSmallSmoke;
 pointingLaserBulletType.hitEffect = sql;
 // 消失效果
 pointingLaserBulletType.despawnEffect = sql;
-// pointingLaserBulletType.fragBullet = Bullets.arc;
+// pointingLaserBulletType.fragBullet = Bullets.lancerLaser;
 // pointingLaserBulletType.fragBullets = 12;
 
 // -= 炮塔 =-
