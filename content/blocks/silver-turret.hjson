@@ -10,7 +10,7 @@ inaccuracy: 0
 rotatespeed: 122
 powerUse: 0.1
 requirements: [
-  copper/70
+  copper/1
 ]
 category: turret
 research: duo

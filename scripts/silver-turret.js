@@ -1,20 +1,23 @@
 
-function loadSound(name, setter) {
-    const params = new Packages.arc.assets.loaders.SoundLoader.SoundParameter();
-    params.loadedCallback = new Packages.arc.assets.AssetLoaderParameters.LoadedCallback({
-        finishedLoading(asset, str, cls) {
-            print('1 load sound ' + name + ' from arc');
-            setter(asset.get(str, cls));
-        }
-    });
 
-    Core.assets.load("sounds/" + name, Packages.arc.audio.Sound, params).loaded = new Cons({
-        get(a) {
-            print('2 load sound ' + name + ' from arc');
-            setter(a);
-        }
-    });
-}
+const lib = require('lib');
+const loadSound = lib.loadSound;
+/**
+ * 指向性激光效果，创建效果时必须在 data 里实现 getX(), getY() ，代表目标位置
+ */
+const pointingLaserSmallEffect = newEffect(50, e => {
+
+    var pos = e.data;
+
+    Draw.color(e.color.add(new Color(0.009, 0.009, 0.009, 0.009)));
+    Draw.alpha(e.fout() * 0.7); // 降低最大不透明度
+    Lines.stroke(1.5);
+    Lines.line(e.x, e.y, pos.getX(), pos.getY());
+    Draw.color(e.color);
+    Draw.alpha(e.fout() * 0.7); // 降低最大不透明度
+    Lines.stroke(1.0);
+    Lines.line(e.x, e.y, pos.getX(), pos.getY());
+});
 
 /**
  * 指向性激光效果，创建效果时必须在 data 里实现 getX(), getY() ，代表目标位置
@@ -41,8 +44,7 @@ const sql = newEffect(50, e => {
     Fill.circle(e.x, e.y, 4 - e.fout() * 4);
 });
 
-/** 指向性激光子弹，发射该类子弹必须指定 data ，目前只能使用 PointingLaserTurret 发射 */
-const pointingLaserBulletType = extend(BasicBulletType, {
+const pointingLaserSubBulletType = extend(BasicBulletType, {
     update(b) {
         // 不进行向量移动，进行一次打击
         if (!b.data.hit) {
@@ -51,8 +53,10 @@ const pointingLaserBulletType = extend(BasicBulletType, {
             var sourceX = b.data.getSourceX();
             var sourceY = b.data.getSourceY();
 
+            // print('shoot ('+sourceX+', '+sourceY+') to ('+targetX+', '+targetY+')');
+
             // 正向激光
-            Effects.effect(pointingLaserEffect, Color.red,
+            Effects.effect(pointingLaserSmallEffect, new Color(0, 222, 255, 0.3),
                 b.data.getSourceX(),
                 b.data.getSourceY(),
                 0,
@@ -60,7 +64,7 @@ const pointingLaserBulletType = extend(BasicBulletType, {
             );
 
             // 反向激光，防止炮塔不在视野时效果没了
-            Effects.effect(pointingLaserEffect, Color.red,
+            Effects.effect(pointingLaserSmallEffect, new Color(0, 222, 255, 0.3),
                 targetX,
                 targetY,
                 0,
@@ -76,13 +80,124 @@ const pointingLaserBulletType = extend(BasicBulletType, {
             Effects.shake(shake, shake, targetX, targetY);
             Effects.effect(Fx.shockwave, targetX, targetY);
 
-            // 喷个火球
-            Call.createBullet(Bullets.fireball, b.getTeam(), targetX, targetY, Mathf.random(360), 1, 1);
+            // 子弹瞬移！啪嚓就撞上
+            b.x = targetX;
+            b.y = targetY;
+            b.data.hit = true;
+        }
+    },
+
+    hit(b, hitx, hity) {
+        var x = hitx ? hitx : b.x;
+        var y = hity ? hity : b.y;
+        this.super$hit(b, x, y);
+        Puddle.deposit(Vars.world.tileWorld(x, y), Liquids.cryofluid, 800);
+    },
+
+    draw(b) {
+    },
+});
+// Don't modify
+pointingLaserSubBulletType.speed = 0.01;
+pointingLaserSubBulletType.hitSize = 20;
+pointingLaserSubBulletType.lifetime = 1;
+pointingLaserSubBulletType.pierce = false;
+pointingLaserSubBulletType.collidesTiles = false;
+pointingLaserSubBulletType.collidesTeam = false;
+pointingLaserSubBulletType.collidesAir = false;
+pointingLaserSubBulletType.collides = false;
+pointingLaserSubBulletType.damage = 300;
+pointingLaserSubBulletType.splashDamage = 100;
+pointingLaserSubBulletType.splashDamageRadius = 40;
+pointingLaserSubBulletType.shootEffect = sql;
+pointingLaserSubBulletType.smokeEffect = Fx.shootSmallSmoke;
+pointingLaserSubBulletType.hitEffect = sql;
+pointingLaserSubBulletType.despawnEffect = sql;
+
+/** 指向性激光子弹，发射该类子弹必须指定 data ，目前只能使用 PointingLaserTurret 发射 */
+const pointingLaserBulletType = extend(BasicBulletType, {
+    update(b) {
+        // 不进行向量移动，进行一次打击
+        if (!b.data.hit) {
+            var targetX = b.data.getX();
+            var targetY = b.data.getY();
+            var sourceX = b.data.getSourceX();
+            var sourceY = b.data.getSourceY();
+
+            // 正向激光
+            Effects.effect(pointingLaserEffect, new Color(0, 222, 255, 0.3),
+                b.data.getSourceX(),
+                b.data.getSourceY(),
+                0,
+                b.data
+            );
+
+            // 反向激光，防止炮塔不在视野时效果没了
+            Effects.effect(pointingLaserEffect, new Color(0, 222, 255, 0.3),
+                targetX,
+                targetY,
+                0,
+                {
+                    getX() { return sourceX; },
+                    getY() { return sourceY; },
+                }
+            );
+
+            // 爆炸效果自行实现
+            // 先炸出冲击波
+            var shake = 1;
+            Effects.shake(shake, shake, targetX, targetY);
+            Effects.effect(Fx.shockwave, targetX, targetY);
 
             // 子弹瞬移！啪嚓就撞上
             b.x = targetX;
             b.y = targetY;
             b.data.hit = true;
+        }
+    },
+
+    hit(b, hitx, hity) {
+        var x = hitx ? hitx : b.x;
+        var y = hity ? hity : b.y;
+        this.super$hit(b, x, y);
+        Puddle.deposit(Vars.world.tileWorld(x, y), Liquids.cryofluid, 800);
+
+        // Find targets on radius
+        const splashRadius = 120;
+        const splashTotal = 5;
+        var splashCount = 0;
+        const shootTo = (tx, ty) => {
+            if (splashCount < splashTotal) {
+                print('shoot to ' + tx + ', ' + ty);
+                Bullet.create(pointingLaserSubBulletType, b.getOwner(), b.getTeam(), x, y, 1, 1, 1, {
+                    // 目标 x
+                    getX() { return tx; },
+                    // 目标 y
+                    getY() { return ty; },
+                    // 发射孔 x
+                    getSourceX() { return x; },
+                    // 发射孔 y
+                    getSourceY() { return y; },
+
+                    hit: false,
+                })
+                splashCount++;
+            }
+        };
+        var first = true;
+        Units.nearbyEnemies(Vars.player.getTeam(), x, y, splashRadius, splashRadius, new Cons({
+            get(v) {
+                if (!first) {
+                    shootTo(v.x, v.y);
+                }
+                first = false;
+            },
+        }));
+
+        for (var i = splashCount; i < splashTotal; i++) {
+            var xx = Mathf.random(10 - splashRadius, splashRadius - 10);
+            var yy = Mathf.random(-Math.max(10, Math.sqrt(splashRadius * splashRadius - xx * xx)), Math.max(10, Math.sqrt(splashRadius * splashRadius - xx * xx)));
+            shootTo(x + xx, y + yy);
         }
     },
 
@@ -92,8 +207,12 @@ const pointingLaserBulletType = extend(BasicBulletType, {
 // Don't modify
 pointingLaserBulletType.speed = 0.01;
 pointingLaserBulletType.hitSize = 20;
-pointingLaserBulletType.lifetime = 50;
+pointingLaserBulletType.lifetime = 1;
 pointingLaserBulletType.pierce = false;
+pointingLaserBulletType.collidesTiles = false;
+pointingLaserBulletType.collidesTeam = false;
+pointingLaserBulletType.collidesAir = false;
+pointingLaserBulletType.collides = false;
 
 /**
  * 炮台实体信息，充能炮有额外的信息
@@ -147,7 +266,15 @@ const pointingLaserTurret = extendContent(PowerTurret, "silver-turret", {
 
         // -======- from Turret.java -======-
         var entity = tile.ent();
-
+        // var typeName = entity.target.getClass().getName();
+        // if (typeName.endsWith("Unit")) {
+        //     var unit = entity.target.getType().create(Vars.player.getTeam());
+        //     unit.set(entity.target.x, entity.target.y);
+        //     unit.add();
+        //     entity.target.remove();
+        // } else {
+        //     entity.target.tile.setTeam(Vars.player.getTeam());
+        // }
         if (entity.reload >= this.reload) {
             var type = this.peekAmmo(tile);
 
@@ -278,8 +405,9 @@ pointingLaserBulletType.smokeEffect = Fx.shootSmallSmoke;
 pointingLaserBulletType.hitEffect = sql;
 // 消失效果
 pointingLaserBulletType.despawnEffect = sql;
-pointingLaserBulletType.fragBullet = Bullets.meltdownLaser;
-pointingLaserBulletType.fragBullets = 12;
+// pointingLaserBulletType.fragBullet = Bullets.arc;
+// pointingLaserBulletType.fragBullets = 12;
+
 // -= 炮塔 =-
 // 发射声音
 // pointingLaserTurret.shootSound = Sounds.laser;

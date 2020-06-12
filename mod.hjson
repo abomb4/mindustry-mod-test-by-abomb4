@@ -1,6 +1,6 @@
 name: "mindustry-mod-test-by-abomb4"
 displayName: "滞人的playground" //what displays in the mod selection menu
 author: "滞人"
-description: "瞎写着玩的，看看能实现什么有意思的功能"
-version: "0.0.1"
+description: "瞎写着玩的，看看能实现什么有意思的功能。0.0.2：‘真实光棱塔’"
+version: "0.0.2"
 minGameVersion: "103"
