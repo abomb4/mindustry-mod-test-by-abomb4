@@ -172,7 +172,7 @@ const pointingLaserBulletType = extend(BasicBulletType, {
         var splashCount = 0;
         const shootTo = (tx, ty) => {
             if (splashCount < splashTotal) {
-                print('shoot to ' + tx + ', ' + ty);
+                // print('shoot to ' + tx + ', ' + ty);
                 Bullet.create(pointingLaserSubBulletType, b.getOwner(), b.getTeam(), x, y, 1, 1, 1, {
                     // 目标 x
                     getX() { return tx; },

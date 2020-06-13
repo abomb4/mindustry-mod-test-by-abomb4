@@ -3,6 +3,7 @@ displayName: "滞人的playground" //what displays in the mod selection menu
 author: "滞人"
 description: "瞎写着玩的，看看能实现什么有意思的功能。
 0.0.2：‘真实光棱塔’
+0.1.1：冷冻力场
 "
 version: "0.0.2"
 minGameVersion: "103"
