@@ -1,0 +1,34 @@
+{
+    "name": "Cold Force Projector",
+    "description": "This projector can freeze up enemys in range.",
+    "health": 5000,
+    "size": 3,
+    "buildCostMultiplier": 1,
+    "radius": 240,
+    "phaseUseTime": 600,
+    "phaseRadiusBoost": 80,
+    "basePowerDraw": 4.0,
+    "breakage": 50,
+    "cooldownNormal": 2,
+    "cooldownBrokenBase": 2,
+    "consumes": {
+        "power": 35.0,
+        "items": {
+            "items": [
+                {
+                    "item": "copper",
+                    "amount": 1
+                }
+            ],
+            "booster": true
+        }
+    },
+    "requirements": [
+        {
+            "item": "copper",
+            "amount": 1
+        }
+    ],
+    "category": "effect",
+    "research": "force-projector"
+}

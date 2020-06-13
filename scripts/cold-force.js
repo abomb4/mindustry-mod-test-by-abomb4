@@ -8,42 +8,12 @@
 const lib = require('lib');
 const loadSound = lib.loadSound;
 
+const theColor = new Color(0, 200, 255, 0.06);
 // md 一堆 package-private 级别的字段，根本没法继承，只能都重写一遍了
 
 const theEntityGroup = Vars.entities.add(BaseEntity).enableMapping();
 const theShieldGroup = Vars.entities.add(BaseEntity, true).enableMapping();
-const shieldBuffer = new Packages.arc.graphics.gl.FrameBuffer(2, 2);
-var shieldDrawLock = null;
 var shieldUpdateLock = null;
-function drawShield(b) {
-    if (shieldDrawLock == null) {
-        shieldDrawLock = b;
-    }
-    if (shieldDrawLock == b) {
-        if (Core.settings.getBool("animatedshields") && Shaders.shield != null) {
-            theShieldGroup.draw(boolf(shield => true), cons(v => v.drawSimple()));
-            Draw.flush();
-            Vars.renderer.shieldBuffer.begin();
-            Core.graphics.clear(Color.clear);
-            theShieldGroup.draw();
-            theShieldGroup.draw(boolf(shield => true), cons(v => v.drawOver()));
-            Draw.flush();
-            shieldBuffer.end();
-            Draw.shader(Shaders.shield);
-            Draw.color(Pal.accent);
-            Draw.rect(Draw.wrap(shieldBuffer.getTexture()), Core.camera.position.x, Core.camera.position.y, Core.camera.width, -Core.camera.height);
-            Draw.color();
-            Draw.shader();
-        } else {
-            theShieldGroup.draw(boolf(shield => true), cons(v => v.drawSimple()));
-        }
-    }
-}
-function unlockShieldDraw(b) {
-    if (shieldDrawLock == b) {
-        shieldDrawLock = null;
-    }
-}
 function updateShield(b) {
     if (shieldUpdateLock == null) shieldUpdateLock = b;
     if (shieldUpdateLock == b) {
@@ -55,7 +25,6 @@ function unlockUpdateShield(b) {
 }
 
 const forceEntity = () => {
-    print('new ForceEntity()');
     const s = extend(TileEntity, {
         _shield: null,
         _broken: true,
@@ -102,7 +71,6 @@ const forceEntity = () => {
 };
 
 const shieldEntity = (force, tile) => {
-    print('init shield');
     const e = extend(EffectEntity, {
         entity: tile.ent(),
 
@@ -117,13 +85,14 @@ const shieldEntity = (force, tile) => {
         },
 
         draw() {
-            Draw.color(new Color(0, 200, 255, 0.1));
+            Draw.color(theColor);
             Fill.poly(this.x, this.y, 6, force.realRadius(this.entity));
             Draw.color();
+            this.drawOver();
+            this.drawSimple();
         },
 
         drawOver() {
-            print("dover)");
             if (this.entity.getHit() <= 0) return;
 
             Draw.color(Color.white);
@@ -133,12 +102,11 @@ const shieldEntity = (force, tile) => {
         },
 
         drawSimple() {
-            print("dsimple)");
             if (force.realRadius(this.entity) < 0.5) return;
 
             const rad = force.realRadius(this.entity);
 
-            Draw.color(new Color(0, 200, 255, 0.1));
+            Draw.color(theColor);
             Lines.stroke(1.5);
             Draw.alpha(0.09 + 0.08 * this.entity.getHit());
             Fill.poly(this.x, this.y, 6, rad);
@@ -146,13 +114,8 @@ const shieldEntity = (force, tile) => {
             Lines.poly(this.x, this.y, 6, rad);
             Draw.reset();
         },
-        removed() {
-            this.super$removed();
-            unlockShieldDraw(this);
-        },
 
         targetGroup() {
-            print('call theShieldGroup!');
             return theShieldGroup;
         },
     });
@@ -232,7 +195,6 @@ const blockType = extendContent(Block, "cold-force", {
         const phaseRadiusBoost = this.phaseRadiusBoost;
 
         if (entity.getShield() == null) {
-            print('init shield...');
             const shield = shieldEntity(this, tile)
             entity.setShield(shield);
             shield.add();
@@ -293,21 +255,22 @@ const blockType = extendContent(Block, "cold-force", {
         //         v.applyEffect(StatusEffects.freezing, 1);
         //     },
         // }));
-        Vars.unitGroup.intersect(tile.drawx() - realRadius, tile.drawy() - realRadius, realRadius * 2, realRadius * 2, new Cons({
-            get(v) {
-                if (v.getTeam() != tile.getTeam() && Intersector.isInsideHexagon(v.getX(), v.getY(), realRadius * 2, tile.drawx(), tile.drawy())) {
-                    print("freeze him! : " + v);
-                    v.applyEffect(StatusEffects.freezing, 1);
-                }
-            },
-        }));
+        if (!entity.getBroken()) {
+            Vars.unitGroup.intersect(tile.drawx() - realRadius, tile.drawy() - realRadius, realRadius * 2, realRadius * 2, new Cons({
+                get(v) {
+                    if (v.getTeam() != tile.getTeam() && Intersector.isInsideHexagon(v.getX(), v.getY(), realRadius * 2, tile.drawx(), tile.drawy())) {
+                        print("freeze him! : " + v);
+                        v.applyEffect(StatusEffects.freezing, 1);
+                    }
+                },
+            }));
+        }
     },
     realRadius(entity) {
         return (this.radius + entity.getPhaseHeat() * this.phaseRadiusBoost) * entity.getRadscl();
     },
     draw(tile) {
         this.super$draw(tile);
-
         const entity = tile.ent();
         if (entity.getShield() != null) {
             entity.getShield().draw();
