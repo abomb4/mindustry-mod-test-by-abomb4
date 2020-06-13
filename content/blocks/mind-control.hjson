@@ -1,8 +1,0 @@
-name: Mind control device
-description: Make your enemys to yours.
-size: 2
-category: turret
-research: duo
-requirements: [
-  copper/1
-]

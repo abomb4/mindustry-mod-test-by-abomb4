@@ -4,15 +4,15 @@
  *
  * @param {Unit} entity 一般是 tile.ent().target.entity
  */
-exports.mindControl = function(entity) {
-    var typeName = entity.getClass().getName();
+exports.mindControl = function(targetEntity) {
+    var typeName = targetEntity.getClass().getName();
     if (typeName.endsWith("Unit")) {
-        var unit = entity.getType().create(Vars.player.getTeam());
-        unit.set(entity.x, entity.y);
+        var unit = targetEntity.getType().create(Vars.player.getTeam());
+        unit.set(targetEntity.x, targetEntity.y);
         unit.add();
-        entity.remove();
+        targetEntity.remove();
     } else {
-        entity.tile.setTeam(Vars.player.getTeam());
+        targetEntity.tile.setTeam(Vars.player.getTeam());
     }
 }
 
