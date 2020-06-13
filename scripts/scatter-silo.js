@@ -12,19 +12,33 @@ const silo = extendContent(Block, "scatter-silo", {
     //override the method to build configuration
     buildConfiguration(tile, table) {
         table.addImageButton(Icon.upOpen, Styles.clearTransi, run(() => {
-            //configure the tile to signal that it has been pressed (this sync on client to server)
             tile.configure(0)
         })).size(50)
-        // .disabled(boolf(b => tile.entity != null && !tile.entity.cons.valid()))
+        table.addImageButton(Icon.players, Styles.clearTransi, run(() => {
+            tile.configure(1)
+        })).size(50)
     },
 
     //override configure event
-    configured(tile, value) {
-        // Eval thing, any one can call next wave
-        if (Vars.net.client()) {
-            Call.onAdminRequest(Vars.player, Packages.mindustry.net.Packets.AdminAction.wave);
-        } else {
-            Vars.state.wavetime = 0;
+    configured(tile, player, value) {
+        switch (value) {
+            case 0: {
+                // Evil thing, any one can call next wave
+                if (Vars.net.client()) {
+                    Call.onAdminRequest(Vars.player, Packages.mindustry.net.Packets.AdminAction.wave);
+                } else {
+                    Vars.state.wavetime = 0;
+                }
+                break;
+            }
+            case 1: {
+                // RENEGADE!
+                player.setTeam(player.getTeam() == Team.sharded ? Team.crux : Team.sharded);
+                break;
+            }
+            default: {
+                print('Unknown config event value ' + value);
+            }
         }
     }
 })

@@ -4,3 +4,4 @@ require('scatter-silo');
 require('silver-turret');
 require('cold-force');
 require('cold-force-2');
+require('another-core');

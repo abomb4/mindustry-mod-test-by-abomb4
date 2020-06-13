@@ -1,0 +1,14 @@
+{
+    "name": "Another core",
+    "description": "You can build another core in a game",
+    "size": 3,
+    "hasItems": true,
+    "unloadable": true,
+    "breakable": true,
+    "rebuildable": false,
+    "health": 1000,
+    "itemCapacity": 4000,
+    "requirements": [],
+    "category": "effect",
+    "research": "launch-pad"
+}
