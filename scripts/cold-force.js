@@ -125,12 +125,11 @@ const fakeShieldEntity = () => {
         }, null, fakeTile)
         x.add();
         fakeShieldEntityLoaded = true;
-        print('fake created!');
     }
 };
 Events.on(EventType.WorldLoadEvent, run(() => {
-    print('fake Reload!');
     fakeShieldEntityLoaded = false;
+    shieldUpdateLock = null;
 }));
 
 const shieldEntity = (force, tile) => {

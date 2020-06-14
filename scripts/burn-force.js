@@ -97,6 +97,7 @@ const fakeShieldEntity = () => {
                 }
 
                 if (theShieldGroup.countInBounds() > 0) {
+                    // print('complex draw><><>><!');
                     if (settings.getBool("animatedshields") && Shaders.shield != null) {
                         Draw.flush();
                         shieldBuffer.begin();
@@ -125,12 +126,11 @@ const fakeShieldEntity = () => {
         }, null, fakeTile)
         x.add();
         fakeShieldEntityLoaded = true;
-        print('fake created!');
     }
 };
 Events.on(EventType.WorldLoadEvent, run(() => {
-    print('fake Reload!');
     fakeShieldEntityLoaded = false;
+    shieldUpdateLock = null;
 }));
 
 const shieldEntity = (force, tile) => {
