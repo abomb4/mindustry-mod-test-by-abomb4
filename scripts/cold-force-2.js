@@ -65,6 +65,12 @@ const mockDataOutput = new java.io.DataOutput({
     },
 });
 
+const freezeStatusEffect = new StatusEffect("forceFreeze2");
+
+freezeStatusEffect.speedMultiplier = 0.1;
+freezeStatusEffect.armorMultiplier = 0.01;
+freezeStatusEffect.effect = Fx.freezing;
+
 const blockType = extendContent(ForceProjector, "cold-force-2", {
     update(tile) {
         /* ForceEntity */
@@ -84,8 +90,7 @@ const blockType = extendContent(ForceProjector, "cold-force-2", {
             Vars.unitGroup.intersect(tile.drawx() - realRadius, tile.drawy() - realRadius, realRadius * 2, realRadius * 2, new Cons({
                 get(v) {
                     if (v.getTeam() != tile.getTeam() && Intersector.isInsideHexagon(v.getX(), v.getY(), realRadius * 2, tile.drawx(), tile.drawy())) {
-                        print("freeze him! : " + v);
-                        v.applyEffect(StatusEffects.freezing, 1);
+                        v.applyEffect(freezeStatusEffect, 30);
                     }
                 }
             }));

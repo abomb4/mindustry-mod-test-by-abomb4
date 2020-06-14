@@ -4,7 +4,7 @@
  *
  * @param {Unit} entity 一般是 tile.ent().target.entity
  */
-exports.mindControl = function(targetEntity) {
+exports.mindControl = function (targetEntity) {
     var typeName = targetEntity.getClass().getName();
     if (typeName.endsWith("Unit")) {
         var unit = targetEntity.getType().create(Vars.player.getTeam());
@@ -16,7 +16,7 @@ exports.mindControl = function(targetEntity) {
     }
 }
 
-exports.loadSound = function(name, setter) {
+exports.loadSound = function (name, setter) {
     const params = new Packages.arc.assets.loaders.SoundLoader.SoundParameter();
     params.loadedCallback = new Packages.arc.assets.AssetLoaderParameters.LoadedCallback({
         finishedLoading(asset, str, cls) {
@@ -31,4 +31,12 @@ exports.loadSound = function(name, setter) {
             setter(a);
         }
     });
+}
+
+exports.forceProjectRender = function (render) {
+    const fakeTile = new Tile(0, 0);
+    const x = new JavaAdapter(ForceProjector.ShieldEntity, {
+        draw: function() { render() }
+    }, null, fakeTile)
+    return x;
 }

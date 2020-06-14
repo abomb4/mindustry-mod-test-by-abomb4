@@ -1,15 +1,16 @@
 /*
  * 此文件描述没法挡子弹的冷冻力场，原理复杂，开 mod 服务器时有可能会死。
- * 如此复杂的原因：
+ * 如此复杂的原因：(md 一堆 package-private 级别的字段，根本没法继承，只能都重写一遍了)
  * 1. update 难以定制，想去掉挡子弹的代码很不容易
- * 2. 力场颜色难以修改，因为 update() 里面写死了 new ShieldEntity，并且力场的渲染是很复杂的
+ * 2. 力场颜色难以修改，因为 update() 里面写死了 new ShieldEntity，并且力场的渲染是在 Renderer 里写死的
  */
 
 const lib = require('lib');
-const loadSound = lib.loadSound;
 
-const theColor = new Color(0, 200, 255, 0.06);
-// md 一堆 package-private 级别的字段，根本没法继承，只能都重写一遍了
+const theShieldBuffer = new Packages.arc.graphics.gl.FrameBuffer(2, 2);
+
+// const theColor = Pal.accent
+const theColor = new Color(0, 200, 255, 1);
 
 const theEntityGroup = Vars.entities.add(BaseEntity).enableMapping();
 const theShieldGroup = Vars.entities.add(BaseEntity, true).enableMapping();
@@ -42,11 +43,11 @@ const forceEntity = () => {
         getPhaseHeat() { return this._phaseHeat; },
         setShield(v) { this._shield = v; },
         setBroken(v) { this._broken = v; },
-        setBuildup(v) { this._buildup = v; },
-        setRadscl(v) { this._radscl = v; },
-        setHit(v) { this._hit = v; },
-        setWarmup(v) { this._warmup = v; },
-        setPhaseHeat(v) { this._phaseHeat = v; },
+        setBuildup(v) { this._buildup = v || 0; },
+        setRadscl(v) { this._radscl = v || 0; },
+        setHit(v) { this._hit = v || 0; },
+        setWarmup(v) { this._warmup = v || 0; },
+        setPhaseHeat(v) { this._phaseHeat = v || 0; },
 
         write(stream) {
             this.super$write(stream);
@@ -69,6 +70,68 @@ const forceEntity = () => {
 
     return s;
 };
+var fakeShieldEntityLoaded = false;
+const fakeShieldEntity = () => {
+    if (!fakeShieldEntityLoaded) {
+        const fakeTile = new Tile(0, 0);
+        const x = new JavaAdapter(ForceProjector.ShieldEntity, {
+            update() {
+                this.x = Core.camera.position.x;
+                this.y = Core.camera.position.y;
+            },
+
+            drawSize() {
+                return 8;
+            },
+            draw() {
+                // print('complex draw!');
+                const camera = Core.camera;
+                const settings = Core.settings;
+                const shieldBuffer = theShieldBuffer;
+                const graphics = Core.graphics;
+
+                if (!graphics.isHidden()
+                    && (Core.settings.getBool("animatedwater") || Core.settings.getBool("animatedshields"))
+                    && (shieldBuffer.getWidth() != graphics.getWidth() || shieldBuffer.getHeight() != graphics.getHeight())) {
+                    shieldBuffer.resize(graphics.getWidth(), graphics.getHeight());
+                }
+
+                if (theShieldGroup.countInBounds() > 0) {
+                    if (settings.getBool("animatedshields") && Shaders.shield != null) {
+                        Draw.flush();
+                        shieldBuffer.begin();
+                        graphics.clear(Color.clear);
+                        theShieldGroup.draw();
+                        theShieldGroup.draw(boolf(shield => true), cons(v => v.drawOver()));
+                        Draw.flush();
+                        shieldBuffer.end();
+                        // Draw.shader(Shaders.water);
+                        Draw.color(theColor);
+                        Draw.rect(Draw.wrap(shieldBuffer.getTexture()), camera.position.x, camera.position.y, camera.width, -camera.height);
+                        Draw.color();
+                        // Draw.shader();
+                    } else {
+                        theShieldGroup.draw(boolf(shield => true), cons(v => v.drawSimple()));
+                    }
+                }
+            },
+            drawOver() {
+                // print('do!');
+            },
+
+            drawSimple() {
+                // print('ds!');
+            },
+        }, null, fakeTile)
+        x.add();
+        fakeShieldEntityLoaded = true;
+        print('fake created!');
+    }
+};
+Events.on(EventType.WorldLoadEvent, run(() => {
+    print('fake Reload!');
+    fakeShieldEntityLoaded = false;
+}));
 
 const shieldEntity = (force, tile) => {
     const e = extend(EffectEntity, {
@@ -88,8 +151,6 @@ const shieldEntity = (force, tile) => {
             Draw.color(theColor);
             Fill.poly(this.x, this.y, 6, force.realRadius(this.entity));
             Draw.color();
-            this.drawOver();
-            this.drawSimple();
         },
 
         drawOver() {
@@ -121,12 +182,31 @@ const shieldEntity = (force, tile) => {
     });
 
     e.set(tile.drawx(), tile.drawy());
+    fakeShieldEntity();
 
     return e;
 };
 
+
+const freezeEffect = newEffect(40, e => {
+    Draw.color(Liquids.cryofluid.color);
+
+    // seed, amount, length, con
+    Angles.randLenVectors(e.id, 3, 1 + e.fin() * 2, new Floatc2({ get: (x, y) => {
+        Fill.circle(e.x + x, e.y + y, e.fout() * 2.2);
+    }}));
+});
+
+const freezeStatusEffect = new StatusEffect("forceFreeze");
+
+freezeStatusEffect.speedMultiplier = 0.1;
+freezeStatusEffect.armorMultiplier = 0.01;
+freezeStatusEffect.effect = freezeEffect;
+
 const blockType = extendContent(Block, "cold-force", {
-    timerUse: this.super$timers++,
+    _timerUse: 0,
+    getTimerUse() { return this._timerUse; },
+    setTimerUse(v) { this._timerUse = v; },
     phaseUseTime: 300,
     phaseRadiusBoost: 100,
     radius: 240,
@@ -143,9 +223,10 @@ const blockType = extendContent(Block, "cold-force", {
     outputsItems() {
         return false;
     },
-    load() {
-        this.super$load();
-        this.topRegion = Core.atlas.find(this.name + "-top");
+    init() {
+        this.super$init();
+        const timer = this.timers++;
+        this.setTimerUse(timer);
         this.destructible = true;
         this.entityType = new Prov({
             get: function () {
@@ -160,7 +241,10 @@ const blockType = extendContent(Block, "cold-force", {
         this.cooldownLiquid = 5;
         this.cooldownBrokenBase = 5;
         this.basePowerDraw = 10;
-        this.topRegion = null;
+    },
+    load() {
+        this.super$load();
+        this.topRegion = Core.atlas.find(this.name + "-top");
     },
     setStats() {
         this.super$setStats();
@@ -190,7 +274,7 @@ const blockType = extendContent(Block, "cold-force", {
         const consumes = this.consumes;
         const cooldownLiquid = this.cooldownLiquid;
         const radius = this.radius;
-        const timerUse = this.timerUse;
+        const timerUse = this.getTimerUse();
         const phaseUseTime = this.phaseUseTime;
         const phaseRadiusBoost = this.phaseRadiusBoost;
 
@@ -201,12 +285,14 @@ const blockType = extendContent(Block, "cold-force", {
         }
 
         const phaseValid = consumes.get(ConsumeType.item).valid(tile.entity);
-
+        // print('284 phaseValid: ' + phaseValid + ', timerUse: ' + timerUse + ", phaseUseTime: " + phaseUseTime);
+        // print('285 entity.getBroken(): ' + entity.getBroken() + ', entity.efficiency(): ' + entity.efficiency());
         entity.setPhaseHeat(Mathf.lerpDelta(entity.getPhaseHeat(), Mathf.num(phaseValid), 0.1));
 
         if (phaseValid && !entity.getBroken() && entity.timer.get(timerUse, phaseUseTime) && entity.efficiency() > 0) {
             entity.cons.trigger();
         }
+        // print('291 phaseValid: ' + phaseValid);
 
         entity.setRadscl(Mathf.lerpDelta(entity.getRadscl(), entity.getBroken() ? 0 : entity.getWarmup(), 0.05));
 
@@ -241,26 +327,18 @@ const blockType = extendContent(Block, "cold-force", {
             entity.setHit(entity.getHit() - 1 / 5 * Time.delta());
         }
 
-        const realRadius = (radius + entity.getPhaseHeat() || 0 * phaseRadiusBoost) * entity.getRadscl() || radius
+        const realRadius = (radius + entity.getPhaseHeat() * phaseRadiusBoost) * entity.getRadscl()
 
         // paramTile = tile;
         // paramEntity = entity;
         // paramBlock = this;
         // bulletGroup.intersect(tile.drawx() - realRadius, tile.drawy() - realRadius, realRadius * 2, realRadius * 2, shieldConsumer);
 
-        // 找敌人
-        // Units.nearbyEnemies(Vars.player.getTeam(), tile.drawx(), tile.drawy(), realRadius, realRadius, new Cons({
-        //     get(v) {
-        //         print("freeze it! : " + v);
-        //         v.applyEffect(StatusEffects.freezing, 1);
-        //     },
-        // }));
         if (!entity.getBroken()) {
             Vars.unitGroup.intersect(tile.drawx() - realRadius, tile.drawy() - realRadius, realRadius * 2, realRadius * 2, new Cons({
                 get(v) {
                     if (v.getTeam() != tile.getTeam() && Intersector.isInsideHexagon(v.getX(), v.getY(), realRadius * 2, tile.drawx(), tile.drawy())) {
-                        print("freeze him! : " + v);
-                        v.applyEffect(StatusEffects.freezing, 1);
+                        v.applyEffect(freezeStatusEffect, 30);
                     }
                 },
             }));
@@ -272,9 +350,9 @@ const blockType = extendContent(Block, "cold-force", {
     draw(tile) {
         this.super$draw(tile);
         const entity = tile.ent();
-        if (entity.getShield() != null) {
-            entity.getShield().draw();
-        }
+        // if (entity.getShield() != null) {
+        //     entity.getShield().draw();
+        // }
         if (entity.getBuildup() <= 0) return;
         Draw.alpha(entity.getBuildup() / this.breakage * 0.75);
         Draw.blend(Blending.additive);
@@ -287,3 +365,5 @@ const blockType = extendContent(Block, "cold-force", {
     },
 });
 blockType.update = true;
+blockType.consumes.item(Items.copper).boost();
+blockType.consumes.power(3);
