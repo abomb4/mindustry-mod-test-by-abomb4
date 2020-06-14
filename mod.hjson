@@ -2,12 +2,14 @@ name: "mindustry-mod-test-by-abomb4"
 displayName: "滞人的Playground" //what displays in the mod selection menu
 author: "滞人"
 description: "这是一个实验性 mod，用 js 写点奇怪的功能。
+已实现：光棱塔、冷冻力场、燃烧力场、无限跳波方块、叛变方块、额外核心
 0.0.2：‘真实光棱塔’
 0.1.1：冷冻力场
 0.2.1：叛变、唯一外置核心
 0.2.2：修复冷冻力场显示效果、重开后显示消失、加材料就崩溃等问题
 0.3.1：燃烧力场
 0.3.2：修复两种力场重进就画不出来的问题
+0.3.3：额外核心只能造一个
 "
-version: "0.3.2"
+version: "0.3.3"
 minGameVersion: "103"

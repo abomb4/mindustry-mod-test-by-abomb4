@@ -250,6 +250,23 @@ const pointingLaserTurret = extendContent(PowerTurret, "silver-turret", {
     chargeSound: Sounds.shotgun,
     shootType: pointingLaserBulletType,
 
+    buildConfiguration(tile, table) {
+        table.addImageButton(Icon.upOpen, Styles.clearTransi, run(() => {
+            tile.configure(0)
+        })).size(50)
+    },
+    //override configure event
+    configured(tile, player, value) {
+        switch (value) {
+            case 0: {
+                break;
+            }
+            default: {
+                print('Unknown config event value ' + value);
+            }
+        }
+    },
+
     update(tile) {
         this.super$update(tile);
 
