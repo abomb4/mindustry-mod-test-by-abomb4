@@ -1,6 +1,6 @@
 {
-    "name": "Cold Force Projector",
-    "description": "This projector can freeze up enemys in range.",
+    "name": "Burn Force Projector",
+    "description": "BURN ENEMYS! And the cheating force can reduce enemys' armor and damage to 0.01",
     "health": 5000,
     "size": 3,
     "solid": false,
