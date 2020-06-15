@@ -1,69 +1,73 @@
 
-const mockDataOutput = new java.io.DataOutput({
-    objs: [],
+const mockDataOutput = new java.io.DataOutput((() => {
+    var objs = []
 
-    myPush(v) {
-        this.objs.push(v);
-    },
-
-    write(v) {
-        this.myPush(v);
-    },
-
-    write(v) {
-        this.myPush(v);
-    },
-
-    write(b, off, len) {
-    },
-
-    writeBoolean(v) {
-        this.myPush(v);
-    },
-
-    writeByte(v) {
-        this.myPush(v);
-    },
-
-    writeShort(v) {
-        this.myPush(v);
-    },
-
-    writeChar(v) {
-        this.myPush(v);
-    },
-
-    writeInt(v) {
-        this.myPush(v);
-    },
-
-    writeLong(v) {
-        this.myPush(v);
-    },
-
-    writeFloat(v) {
-        this.myPush(v);
-    },
-
-    writeDouble(v) {
-        this.myPush(v);
-    },
-
-    writeBytes(v) {
-        this.myPush(v);
-    },
-
-    writeChars(v) {
-        this.myPush(v);
-    },
-
-    writeUTF(v) {
-        this.myPush(v);
-    },
-    myPop() {
+    function myPush(v) {
+        objs.push(v);
+    }
+    function myPop() {
         return this.objs.pop();
-    },
-});
+    }
+
+    return {
+        myPush: myPush,
+        myPop: myPop,
+        write(v) {
+            myPush(v);
+        },
+
+        write(v) {
+            myPush(v);
+        },
+
+        write(b, off, len) {
+        },
+
+        writeBoolean(v) {
+            myPush(v);
+        },
+
+        writeByte(v) {
+            myPush(v);
+        },
+
+        writeShort(v) {
+            myPush(v);
+        },
+
+        writeChar(v) {
+            myPush(v);
+        },
+
+        writeInt(v) {
+            myPush(v);
+        },
+
+        writeLong(v) {
+            myPush(v);
+        },
+
+        writeFloat(v) {
+            myPush(v);
+        },
+
+        writeDouble(v) {
+            myPush(v);
+        },
+
+        writeBytes(v) {
+            myPush(v);
+        },
+
+        writeChars(v) {
+            myPush(v);
+        },
+
+        writeUTF(v) {
+            myPush(v);
+        },
+    }
+})());
 
 const freezeStatusEffect = new StatusEffect("forceFreeze2");
 
