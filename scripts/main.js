@@ -6,3 +6,4 @@ require('cold-force');
 require('cold-force-2');
 require('burn-force');
 require('another-core');
+require('mind-control');

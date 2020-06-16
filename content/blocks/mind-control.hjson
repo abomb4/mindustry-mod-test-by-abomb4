@@ -1,0 +1,13 @@
+health: 4444
+size: 3
+reload: 1
+range: 600
+ammoUseEffect: shellEjectSmall
+inaccuracy: 0
+rotatespeed: 122
+powerUse: 0.1
+requirements: [
+  copper/1
+]
+category: turret
+research: duo

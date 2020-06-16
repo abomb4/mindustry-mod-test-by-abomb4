@@ -310,7 +310,7 @@ const pointingLaserTurretEntity = () => {
 /** 指向性激光炮塔 */
 const pointingLaserTurret = extendContent(PowerTurret, "silver-turret", {
     chargeTime: 60,
-    cooldownDelay: 60,
+    cooldownDelay: 30,
     chargeSound: Sounds.shotgun,
     shootType: pointingLaserBulletType,
 

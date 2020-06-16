@@ -260,6 +260,7 @@ const blockType = extendContent(Block, "cold-force", {
         Draw.color();
     },
     removed(tile) {
+        this.super$removed(tile);
         const entity = tile.ent();
         unlockUpdateShield(entity);
         if (entity.getShield() != null) {
