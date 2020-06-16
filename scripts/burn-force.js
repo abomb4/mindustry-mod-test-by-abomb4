@@ -252,7 +252,11 @@ const blockType = extendContent(Block, "burn-force", {
         Draw.color();
     },
     removed(tile) {
-        unlockUpdateShield(tile.ent());
+        const entity = tile.ent();
+        unlockUpdateShield(entity);
+        if (entity.getShield() != null) {
+            entity.getShield().remove();
+        }
     },
     update(tile) {
         /* ForceEntity */
