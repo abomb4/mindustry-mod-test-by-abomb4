@@ -4,8 +4,6 @@ solid: false
 targetable: false
 hasItems: true
 configurable: true
-localizedName: "Scatter Silo"
-description: "A player-activatable block that scatters bullets everywhere upon use."
 category: turret
 requirements: [
   copper/1

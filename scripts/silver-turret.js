@@ -91,7 +91,59 @@ const pointingLaserSubBulletType = extend(BasicBulletType, {
         var x = hitx ? hitx : b.x;
         var y = hity ? hity : b.y;
         this.super$hit(b, x, y);
-        Puddle.deposit(Vars.world.tileWorld(x, y), Liquids.cryofluid, 800);
+        // Puddle.deposit(Vars.world.tileWorld(x, y), Liquids.cryofluid, 800);
+
+        if (b.data.subsub > 0) {
+
+            // Find targets on radius
+            const hited = b.data.hited;
+            const splashRadius = 120;
+            const splashTotal = 1;
+            var splashCount = 0;
+            const shootTo = (tx, ty, tg) => {
+                if (splashCount < splashTotal) {
+                    if (tg && tg.id !== undefined) {
+                        if (hited[tg.id] === true) {
+                            return;
+                        } else {
+                            hited[tg.id] = true;
+                        }
+                    }
+                    // print('shoot to ' + tx + ', ' + ty);
+                    Bullet.create(pointingLaserSubBulletType, b.getOwner(), b.getTeam(), x, y, 1, 1, 1, {
+                        // 目标 x
+                        getX() { return tx; },
+                        // 目标 y
+                        getY() { return ty; },
+                        // 发射孔 x
+                        getSourceX() { return x; },
+                        // 发射孔 y
+                        getSourceY() { return y; },
+
+                        hit: false,
+                        subsub: b.data.subsub - 1,
+                        hited: hited
+                    })
+                    splashCount++;
+                }
+            };
+            var first = true;
+            // 找敌人，建筑找不到不管了
+            Units.nearbyEnemies(Vars.player.getTeam(), x, y, splashRadius, splashRadius, new Cons({
+                get(v) {
+                    if (!first) {
+                        shootTo(v.getX(), v.getY(), v);
+                    }
+                    first = false;
+                },
+            }));
+
+            for (var i = splashCount; i < splashTotal; i++) {
+                var xx = Mathf.random(10 - splashRadius, splashRadius - 10);
+                var yy = Mathf.random(-Math.max(10, Math.sqrt(splashRadius * splashRadius - xx * xx)), Math.max(10, Math.sqrt(splashRadius * splashRadius - xx * xx)));
+                shootTo(x + xx, y + yy);
+            }
+        }
     },
 
     draw(b) {
@@ -167,10 +219,20 @@ const pointingLaserBulletType = extend(BasicBulletType, {
         Puddle.deposit(Vars.world.tileWorld(x, y), Liquids.cryofluid, 800);
 
         // Find targets on radius
+        const hited = {};
         const splashRadius = this.splashRadius;
         const splashTotal = this.splashTotal;
         var splashCount = 0;
-        const shootTo = (tx, ty) => {
+        const shootTo = (tx, ty, tg) => {
+
+            if (tg && tg.id !== undefined) {
+                if (hited[tg.id] === true) {
+                    return;
+                } else {
+                    hited[tg.id] = true;
+                }
+            }
+
             if (splashCount < splashTotal) {
                 // print('shoot to ' + tx + ', ' + ty);
                 Bullet.create(pointingLaserSubBulletType, b.getOwner(), b.getTeam(), x, y, 1, 1, 1, {
@@ -184,6 +246,8 @@ const pointingLaserBulletType = extend(BasicBulletType, {
                     getSourceY() { return y; },
 
                     hit: false,
+                    hited: hited,
+                    subsub: 5,
                 })
                 splashCount++;
             }
@@ -193,7 +257,7 @@ const pointingLaserBulletType = extend(BasicBulletType, {
         Units.nearbyEnemies(Vars.player.getTeam(), x, y, splashRadius, splashRadius, new Cons({
             get(v) {
                 if (!first) {
-                    shootTo(v.getX(), v.getY());
+                    shootTo(v.getX(), v.getY(), v);
                 }
                 first = false;
             },

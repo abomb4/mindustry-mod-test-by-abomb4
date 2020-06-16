@@ -1,6 +1,4 @@
 {
-    "name": "Cold Force Projector 2",
-    "description": "This projector can freeze up enemys in range and not lost the defence effect.",
     "health": 5000,
     "size": 3,
     "buildCostMultiplier": 1,

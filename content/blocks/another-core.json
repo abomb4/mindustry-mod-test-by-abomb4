@@ -1,6 +1,4 @@
 {
-    "name": "Another core",
-    "description": "You can build another core in a game",
     "size": 3,
     "hasItems": true,
     "unloadable": true,
