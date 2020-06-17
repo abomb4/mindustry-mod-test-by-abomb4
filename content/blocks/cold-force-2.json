@@ -10,7 +10,7 @@
     "cooldownNormal": 2,
     "cooldownBrokenBase": 2,
     "consumes": {
-        "power": 35.0,
+        "power": 0.1,
         "items": {
             "items": [
                 {

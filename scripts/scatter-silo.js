@@ -14,9 +14,9 @@ const silo = extendContent(Block, "scatter-silo", {
         table.addImageButton(Icon.upOpen, Styles.clearTransi, run(() => {
             tile.configure(0)
         })).size(50)
-        table.addImageButton(Icon.players, Styles.clearTransi, run(() => {
-            tile.configure(1)
-        })).size(50)
+        // table.addImageButton(Icon.players, Styles.clearTransi, run(() => {
+        //     tile.configure(1)
+        // })).size(50)
     },
 
     //override configure event

@@ -4,7 +4,7 @@
     "solid": false,
     "targetable": false,
     "consumes": {
-        "power": 35.0,
+        "power": 0.1,
         "items": {
             "items": [
                 {
