@@ -1,73 +1,81 @@
 
-const mockDataOutput = new java.io.DataOutput((() => {
+const mockDataOutoutObj = (() => {
     var objs = []
 
     function myPush(v) {
         objs.push(v);
     }
     function myPop() {
-        return this.objs.pop();
+        return objs.pop();
     }
+    const dataOutput = new java.io.DataOutput((() => {
 
+        return {
+            myPush: myPush,
+            myPop: myPop,
+            write(v) {
+                myPush(v);
+            },
+
+            write(v) {
+                myPush(v);
+            },
+
+            write(b, off, len) {
+            },
+
+            writeBoolean(v) {
+                myPush(v);
+            },
+
+            writeByte(v) {
+                myPush(v);
+            },
+
+            writeShort(v) {
+                myPush(v);
+            },
+
+            writeChar(v) {
+                myPush(v);
+            },
+
+            writeInt(v) {
+                myPush(v);
+            },
+
+            writeLong(v) {
+                myPush(v);
+            },
+
+            writeFloat(v) {
+                myPush(v);
+            },
+
+            writeDouble(v) {
+                myPush(v);
+            },
+
+            writeBytes(v) {
+                myPush(v);
+            },
+
+            writeChars(v) {
+                myPush(v);
+            },
+
+            writeUTF(v) {
+                myPush(v);
+            },
+        }
+    })());
     return {
         myPush: myPush,
         myPop: myPop,
-        write(v) {
-            myPush(v);
-        },
-
-        write(v) {
-            myPush(v);
-        },
-
-        write(b, off, len) {
-        },
-
-        writeBoolean(v) {
-            myPush(v);
-        },
-
-        writeByte(v) {
-            myPush(v);
-        },
-
-        writeShort(v) {
-            myPush(v);
-        },
-
-        writeChar(v) {
-            myPush(v);
-        },
-
-        writeInt(v) {
-            myPush(v);
-        },
-
-        writeLong(v) {
-            myPush(v);
-        },
-
-        writeFloat(v) {
-            myPush(v);
-        },
-
-        writeDouble(v) {
-            myPush(v);
-        },
-
-        writeBytes(v) {
-            myPush(v);
-        },
-
-        writeChars(v) {
-            myPush(v);
-        },
-
-        writeUTF(v) {
-            myPush(v);
-        },
+        dataOutput: dataOutput,
     }
-})());
+})();
+const mockDataOutput = mockDataOutoutObj.dataOutput;
 
 const freezeStatusEffect = new StatusEffect("forceFreeze2");
 
@@ -82,11 +90,11 @@ const blockType = extendContent(ForceProjector, "cold-force-2", {
 
         tile.ent().write(mockDataOutput);
         // do not remove non-used var
-        const phaseHeat = mockDataOutput.myPop();
-        const warmup = mockDataOutput.myPop();
-        const radscl = mockDataOutput.myPop();
-        const buildup = mockDataOutput.myPop();
-        const broken = mockDataOutput.myPop();
+        const phaseHeat = mockDataOutoutObj.myPop();
+        const warmup = mockDataOutoutObj.myPop();
+        const radscl = mockDataOutoutObj.myPop();
+        const buildup = mockDataOutoutObj.myPop();
+        const broken = mockDataOutoutObj.myPop();
 
         const realRadius = (this.radius + phaseHeat * this.phaseRadiusBoost) * radscl;
 
