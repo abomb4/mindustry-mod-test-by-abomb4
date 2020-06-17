@@ -40,3 +40,5 @@ exports.forceProjectRender = function (render) {
     }, null, fakeTile)
     return x;
 }
+
+exports.modName = "mindustry-mod-test-by-abomb4";

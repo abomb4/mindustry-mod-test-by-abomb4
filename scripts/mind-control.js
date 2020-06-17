@@ -180,6 +180,7 @@ const mindControlBlock = extendContent(PowerTurret, "mind-control", {
             this.effects(tile);
             Effects.effect(controlledEffect, new Color(200, 0, 222, 0.7), target.x, target.y);
         }
+        entity.reload = 0;
     },
     validateTarget(tile) {
         const entity = tile.ent();
