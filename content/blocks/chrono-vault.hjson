@@ -1,0 +1,10 @@
+type: Vault
+itemCapacity: 100000000
+hasItems: true
+health: 20002
+size: 6
+requirements: [
+  copper/1
+]
+category: effect
+research: vault

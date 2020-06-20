@@ -1,0 +1,9 @@
+size: 1,
+health: 120
+speed: 0.01
+itemCapacity: 2000
+requirements: [
+    copper/1
+]
+category: effect
+research: unloader

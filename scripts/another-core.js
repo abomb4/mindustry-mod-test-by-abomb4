@@ -1,27 +1,48 @@
 
-var built = 0;
+const built = {};
+function canBuild(team) {
+    if (!built[team.id]) {
+        built[team.id] = 0;
+    }
+    return built[team.id] < 2;
+}
+function addBuild(team) {
+    if (!built[team.id]) {
+        built[team.id] = 0;
+    }
+    built[team.id]++;
+}
+function removeBuild(team) {
+    if (!built[team.id]) {
+        built[team.id] = 0;
+    }
+    built[team.id]--;
+}
 const anotherCoreEntity = (core) => {
-    return new JavaAdapter(CoreBlock.CoreEntity, {
+    var theTeam = Vars.player.team;
+    const entity = new JavaAdapter(CoreBlock.CoreEntity, {
         added() {
             this.super$added();
-            built++;
+            theTeam = this.team;
+            addBuild(theTeam);
         },
         removed() {
+            removeBuild(theTeam);
             this.super$removed();
-            built--;
         },
     }, core);
+    return entity;
 };
 const anotherCore = extendContent(CoreBlock, "another-core", {
     canBreak() {
         return true;
     },
     isVisible() {
-        return built <= 0;
+        return this.super$isVisible() && canBuild(Vars.player.team);
     }
 });
 anotherCore.entityType = prov(() => anotherCoreEntity(anotherCore));
 
 Events.on(EventType.WorldLoadEvent, run(() => {
-    built = 0;
+    built = {};
 }));

@@ -5,11 +5,11 @@ const biu = newEffect(50, e => {
 
     Draw.color(e.color.add(new Color(0.009, 0.009, 0.009, 0.009)));
     Draw.alpha(e.fout());
-    Lines.stroke(2.5);
+    Lines.stroke(1.5);
     Lines.line(e.x, e.y, pos.getX(), pos.getY());
     Draw.color(e.color);
     Draw.alpha(e.fout());
-    Lines.stroke(1.5);
+    Lines.stroke(0.5);
     Lines.line(e.x, e.y, pos.getX(), pos.getY());
     // Draw.reset();
 });
@@ -24,10 +24,10 @@ const 超时空包裹 = extend(MassDriverBolt, {
     }
 });
 
-const 超时空驱动器 = extendContent(MassDriver, "超时空驱动器", {
+const chronoMassDriver = extendContent(MassDriver, "chrono-mass-driver", {
 
     /**
-     * 大部分都是复写 java 代码，有些功能好像还不太好写，super 这种 js 不好调用
+     * 大部分都是复写 java 代码
      */
     fire(tile, target) {
         var entity = tile.ent();
@@ -61,7 +61,7 @@ const 超时空驱动器 = extendContent(MassDriver, "超时空驱动器", {
         Effects.effect(this.smokeEffect, tile.drawx() + Angles.trnsx(angle, translation),
         tile.drawy() + Angles.trnsy(angle, translation), angle);
 
-        Effects.effect(biu, Color.red,
+        Effects.effect(biu, Color.purple,
             tile.drawx() + Angles.trnsx(angle, translation),
             tile.drawy() + Angles.trnsy(angle, translation),
             0, {
@@ -76,6 +76,12 @@ const 超时空驱动器 = extendContent(MassDriver, "超时空驱动器", {
 
         Effects.shake(this.shake, this.shake, entity);
     },
+    tryDump(tile) {
+        // 24X SUPER DUMP SPPED!?
+        for (var i = 24; i > 0; i--) {
+            this.super$tryDump(tile, null);
+        }
+    },
     // linkValid(tile){
     //     if(tile == null) return false;
     //     var entity = tile.ent();
@@ -85,3 +91,4 @@ const 超时空驱动器 = extendContent(MassDriver, "超时空驱动器", {
     //     return link != null && link.block().minDistribute && link.getTeam() == tile.getTeam();
     // }
 });
+chronoMassDriver.shake = 1;
