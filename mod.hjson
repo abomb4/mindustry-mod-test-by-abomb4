@@ -1,10 +1,17 @@
 name: "mindustry-mod-test-by-abomb4"
-displayName: "滞人的Playground" //what displays in the mod selection menu
-author: "滞人"
-description: "这是一个实验性 mod，用 js 写点奇怪的功能。
+displayName: 滞人的Playground
+author: 滞人
+description: '''
+这是一个实验性 mod，用 js 写点奇怪的功能。
+This is an experimental mod, implements some funny function using js.
+
 已实现：光棱塔、冷冻力场、燃烧力场、无限跳波方块、叛变方块、额外核心、三大作弊方块、心灵控制、熔毁大风车
-0.6.1：熔毁大风车（造太多会卡）
+
+Already implemented:
+Prism Tower, Cold Shield, Burn Projector, Unlimited Next Wave, Another Core, Cheat Blocks, Mind Control, Meltdown Fan, Chrono Mass Driver, Chrono Vault, Chrono Unloader
+
 0.7.1：超级仓库、超级质驱、超级提取器；额外核心现在不同 team 分开计数；移除示例 mod 中的内容；
-"
-version: "0.7.1"
-minGameVersion: "103"
+0.7.2：修复 steam 版里没删掉无用内容的问题
+'''
+version: 0.7.2
+minGameVersion: 103
