@@ -41,4 +41,4 @@ exports.forceProjectRender = function (render) {
     return x;
 }
 
-exports.modName = "mindustry-mod-test-by-abomb4";
+exports.modName = "滞人的Playground";
