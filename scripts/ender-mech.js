@@ -75,7 +75,9 @@ const weapon = (() => {
 })();
 
 const mech = extendContent(Mech, 'ender-mech', {
-
+    getExtraArmor(player) {
+        return player.shootHeat * 75;
+    },
 });
 mech.weapon = weapon;
 mech.flying = false;

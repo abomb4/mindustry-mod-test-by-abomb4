@@ -12,6 +12,7 @@ Prism Tower, Cold Shield, Burn Projector, Unlimited Next Wave, Another Core, Che
 
 0.8.1：作弊物品输出速度更快；mod 更名
 0.9.1：Ender 机甲
+0.9.2：Ender 机甲开火增加护甲，最高减少 75% 伤害
 '''
-version: 0.9.1
+version: 0.9.2
 minGameVersion: 103
