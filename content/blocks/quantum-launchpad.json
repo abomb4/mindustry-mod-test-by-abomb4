@@ -1,0 +1,10 @@
+{
+    "health": 250,
+    "size": 4,
+    "itemCapacity": 100,
+    "destructible": true,
+    "launchTime": 600,
+    "category": "effect",
+    "research": "cheat-power",
+    "requirements": []
+}

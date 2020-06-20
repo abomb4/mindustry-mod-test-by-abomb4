@@ -11,3 +11,4 @@ require('meltdown-fan');
 require('chrono-unloader');
 require('cheat-item');
 require('ender-mech');
+require('quantum-launchpad');
