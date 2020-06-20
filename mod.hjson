@@ -5,14 +5,13 @@ description: '''
 这是一个实验性 mod，用 js 写点奇怪的功能。
 This is an experimental mod, implements some funny function using js.
 
-已实现：光棱塔、冷冻力场、燃烧力场、无限跳波方块、叛变方块、额外核心、三大作弊方块、心灵控制、熔毁大风车
+已实现：光棱塔、冷冻力场、燃烧力场、无限跳波方块、叛变方块、额外核心、三大作弊方块、心灵控制、熔毁大风车、激光机甲
 
 Already implemented:
-Prism Tower, Cold Shield, Burn Projector, Unlimited Next Wave, Another Core, Cheat Blocks, Mind Control, Meltdown Fan, Chrono Mass Driver, Chrono Vault, Chrono Unloader
+Prism Tower, Cold Shield, Burn Projector, Unlimited Next Wave, Another Core, Cheat Blocks, Mind Control, Meltdown Fan, Chrono Mass Driver, Chrono Vault, Chrono Unloader, Laser Mech
 
-0.7.1：超级仓库、超级质驱、超级提取器；额外核心现在不同 team 分开计数；移除示例 mod 中的内容；
-0.7.2：修复 steam 版里没删掉无用内容的问题
 0.8.1：作弊物品输出速度更快；mod 更名
+0.9.1：Ender 机甲
 '''
-version: 0.8.1
+version: 0.9.1
 minGameVersion: 103

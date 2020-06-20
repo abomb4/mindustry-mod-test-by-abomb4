@@ -41,4 +41,4 @@ exports.forceProjectRender = function (render) {
     return x;
 }
 
-exports.modName = "滞人的Playground";
+exports.modName = "滞人的playground";
