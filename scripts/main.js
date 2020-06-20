@@ -8,6 +8,7 @@ require('burn-force');
 require('another-core');
 require('mind-control');
 require('meltdown-fan');
+require('meltdown-fan-2');
 require('chrono-unloader');
 require('cheat-item');
 require('ender-mech');
