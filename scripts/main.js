@@ -13,3 +13,4 @@ require('chrono-unloader');
 require('cheat-item');
 require('ender-mech');
 require('quantum-launchpad');
+require('void-force');

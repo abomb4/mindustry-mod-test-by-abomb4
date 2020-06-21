@@ -1,6 +1,38 @@
 
 const lib = require('lib');
 
+const hitHealBeamEffect = newEffect(8, (e) => {
+    Draw.color(Color.white, Pal.heal, e.fin());
+    Lines.stroke(0.5 + e.fout());
+    Lines.circle(e.x, e.y, e.fin() * 30);
+});
+const healBeam = (() => {
+
+    const bt = extend(HealBulletType, {
+        init(b) {
+            if (b) {
+                this.super$init(b);
+                this.healPercent = 10;
+                this.speed = 7;
+                this.damage = 40;
+                this.homingPower = 10;
+                this.splashDamage = 30;
+                this.splashDamageRadius = 30;
+                this.hitEffect = hitHealBeamEffect;
+            }
+        },
+        draw(b) {
+            Draw.color(Pal.heal);
+            Lines.stroke(2);
+            Lines.lineAngleCenter(b.x, b.y, b.rot(), 15);
+            Draw.color(Color.white);
+            Lines.lineAngleCenter(b.x, b.y, b.rot(), 1);
+            Draw.reset();
+        },
+    });
+    return bt;
+})();
+
 const landerLaser2 = (() => {
     const tmpColor = new Color();
     const colors = [Pal.lancerLaser.cpy().mul(1, 1, 1, 0.4), Pal.lancerLaser, Color.white];
@@ -102,6 +134,6 @@ mech.drawCell = true;
 mech.drawItems = true;
 mech.drawLight = true;
 mech.engineOffset = 5;
-mech.engineSize = 3;
+// mech.engineSize = 3;
 mech.weaponOffsetY = -2;
 mech.weaponOffsetX = 5;

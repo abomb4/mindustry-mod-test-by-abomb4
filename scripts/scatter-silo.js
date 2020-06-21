@@ -14,6 +14,9 @@ const silo = extendContent(Block, "scatter-silo", {
         table.addImageButton(Icon.upOpen, Styles.clearTransi, run(() => {
             tile.configure(0)
         })).size(50)
+        table.addImageButton(Icon.warningSmall, Styles.clearTransi, run(() => {
+            tile.configure(1)
+        })).size(50)
         // table.addImageButton(Icon.players, Styles.clearTransi, run(() => {
         //     tile.configure(1)
         // })).size(50)
@@ -32,9 +35,18 @@ const silo = extendContent(Block, "scatter-silo", {
                 break;
             }
             case 1: {
-                // RENEGADE!
-                player.setTeam(player.getTeam() == Team.sharded ? Team.crux : Team.sharded);
+                for (var i = 10; i > 0; i--) {
+                    if (Vars.net.client()) {
+                        Call.onAdminRequest(Vars.player, Packages.mindustry.net.Packets.AdminAction.wave);
+                    } else {
+                        Vars.logic.runWave();
+                    }
+                }
                 break;
+
+                // // RENEGADE!
+                // player.setTeam(player.getTeam() == Team.sharded ? Team.crux : Team.sharded);
+                // break;
             }
             default: {
                 print('Unknown config event value ' + value);
