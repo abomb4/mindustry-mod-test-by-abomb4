@@ -10,7 +10,7 @@ This is an experimental mod, implements some funny function using js.
 Already implemented:
 Prism Tower, Cold Shield, Burn Projector, Unlimited Next Wave, Another Core, Cheat Blocks, Mind Control, Meltdown Fan, Chrono Mass Driver, Chrono Vault, Chrono Unloader, Laser Mech, Quantum Launchpad
 
-0.11.1：熔毁大风车2
+0.11.2：额外核心在剩余一个 core 时不可拆
 '''
-version: 0.11.1
+version: 0.11.2
 minGameVersion: 103

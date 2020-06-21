@@ -35,7 +35,7 @@ const anotherCoreEntity = (core) => {
 };
 const anotherCore = extendContent(CoreBlock, "another-core", {
     canBreak() {
-        return true;
+        return Vars.state.teams.cores(Vars.player.team).size > 1;
     },
     isVisible() {
         return this.super$isVisible() && canBuild(Vars.player.team);
