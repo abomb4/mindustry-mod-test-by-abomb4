@@ -49,7 +49,7 @@ const silo = extendContent(Block, "scatter-silo", {
                 // break;
             }
             default: {
-                print('Unknown config event value ' + value);
+                // print('Unknown config event value ' + value);
             }
         }
     }

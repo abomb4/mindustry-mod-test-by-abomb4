@@ -20,14 +20,14 @@ exports.loadSound = function (name, setter) {
     const params = new Packages.arc.assets.loaders.SoundLoader.SoundParameter();
     params.loadedCallback = new Packages.arc.assets.AssetLoaderParameters.LoadedCallback({
         finishedLoading(asset, str, cls) {
-            print('1 load sound ' + name + ' from arc');
+            // print('1 load sound ' + name + ' from arc');
             setter(asset.get(str, cls));
         }
     });
 
     Core.assets.load("sounds/" + name, Packages.arc.audio.Sound, params).loaded = new Cons({
         get(a) {
-            print('2 load sound ' + name + ' from arc');
+            // print('2 load sound ' + name + ' from arc');
             setter(a);
         }
     });

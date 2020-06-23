@@ -1,12 +1,46 @@
 
 const lib = require('lib');
 
-const hitHealBeamEffect = newEffect(8, (e) => {
-    Draw.color(Color.white, Pal.heal, e.fin());
-    Lines.stroke(0.5 + e.fout());
-    Lines.circle(e.x, e.y, e.fin() * 30);
-});
+const healBeamFrag = (() => {
+
+    const hitEffect = newEffect(8, (e) => {
+        Draw.color(Color.white, Pal.heal, e.fin());
+        Lines.stroke(0.5 + e.fout());
+        Lines.circle(e.x, e.y, e.fin() * 10);
+    });
+
+    const bt = extend(HealBulletType, {
+        init(b) {
+            if (b) {
+                this.super$init(b);
+                this.healPercent = 5;
+                this.speed = 3;
+                this.damage = 10;
+                this.homingPower = 15;
+                this.splashDamage = 5;
+                this.splashDamageRadius = 10;
+                this.hitEffect = hitEffect;
+                this.lifetime = 20;
+            }
+        },
+        draw(b) {
+            Draw.color(Pal.heal);
+            Lines.stroke(1);
+            Lines.lineAngleCenter(b.x, b.y, b.rot(), 6);
+            Draw.color(Color.white);
+            Lines.lineAngleCenter(b.x, b.y, b.rot(), 1);
+            Draw.reset();
+        },
+    });
+    return bt;
+})();
 const healBeam = (() => {
+
+    const hitEffect = newEffect(8, (e) => {
+        Draw.color(Color.white, Pal.heal, e.fin());
+        Lines.stroke(0.5 + e.fout());
+        Lines.circle(e.x, e.y, e.fin() * 30);
+    });
 
     const bt = extend(HealBulletType, {
         init(b) {
@@ -14,11 +48,14 @@ const healBeam = (() => {
                 this.super$init(b);
                 this.healPercent = 10;
                 this.speed = 7;
-                this.damage = 40;
-                this.homingPower = 10;
-                this.splashDamage = 30;
+                this.damage = 30;
+                this.homingPower = 50;
+                this.splashDamage = 10;
                 this.splashDamageRadius = 30;
-                this.hitEffect = hitHealBeamEffect;
+                this.hitEffect = hitEffect;
+                this.fragBullet = healBeamFrag;
+                this.fragBullets = 3;
+                this.lifetime = 40;
             }
         },
         draw(b) {
@@ -71,7 +108,7 @@ const landerLaser2 = (() => {
     bt.speed = 0.01;
     bt.hitSize = 4;
     bt.drawSize = 420;
-    bt.damage = 90;
+    bt.damage = 70;
     bt.lifetime = 16;
     bt.pierce = true;
     bt.keepVelocity = false;
@@ -89,7 +126,7 @@ const weapon = (() => {
                 assetName + "-equip",
                 Core.atlas.find(assetName + "-equip", Core.atlas.find("clear"))
             );
-            print('load ' + assetName + '-equip : ' + this.region);
+            // print('load ' + assetName + '-equip : ' + this.region);
         },
     });
 
@@ -106,34 +143,39 @@ const weapon = (() => {
     return w;
 })();
 
-const mech = extendContent(Mech, 'ender-mech', {
-    getExtraArmor(player) {
-        return player.shootHeat * 75;
-    },
-});
-mech.weapon = weapon;
-mech.flying = false;
-mech.speed = 0.2;
-mech.maxSpeed = 5;
-mech.boostSpeed = 2;
-mech.drag = 0.09;
-mech.mass = 1.5;
-mech.shake = 3;
-mech.health = 370;
-mech.hitsize = 15;
-mech.mineSpeed = 3;
-mech.drillPower = 2;
-mech.buildPower = 60;
-mech.engineColor = Color.valueOf("98F5FF");
-mech.itemCapacity = 600;
-mech.turnCursor = true;
-mech.canHeal = false;
-mech.compoundSpeed = 8;
-mech.compoundSpeedBoost = 3;
-mech.drawCell = true;
-mech.drawItems = true;
-mech.drawLight = true;
-mech.engineOffset = 5;
-// mech.engineSize = 3;
-mech.weaponOffsetY = -2;
-mech.weaponOffsetX = 5;
+const mech = (() => {
+    const m = extendContent(Mech, 'ender-mech', {
+        getExtraArmor(player) {
+            return player.shootHeat * 75;
+        },
+    });
+
+    m.weapon = weapon;
+    m.flying = false;
+    m.speed = 0.2;
+    m.maxSpeed = 5;
+    m.boostSpeed = 2;
+    m.drag = 0.09;
+    m.mass = 1.5;
+    m.shake = 3;
+    m.health = 370;
+    m.hitsize = 15;
+    m.mineSpeed = 3;
+    m.drillPower = 2;
+    m.buildPower = 60;
+    m.engineColor = Color.valueOf("98F5FF");
+    m.itemCapacity = 600;
+    m.turnCursor = true;
+    m.canHeal = false;
+    m.compoundSpeed = 8;
+    m.compoundSpeedBoost = 3;
+    m.drawCell = true;
+    m.drawItems = true;
+    m.drawLight = true;
+    m.engineOffset = 5;
+    // mech.engineSize = 3;
+    m.weaponOffsetY = -2;
+    m.weaponOffsetX = 5;
+
+    return m;
+})();
