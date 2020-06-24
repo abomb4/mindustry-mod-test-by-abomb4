@@ -41,8 +41,7 @@ exports.forceProjectRender = function (render) {
     return x;
 }
 
-exports.modName = "滞人的playground";
-
+exports.aModName = "滞人的playground";
 
 exports.playerShield = (() => {
 

@@ -1,6 +1,6 @@
 
 
-const lib = require('lib');
+const lib = require('/abomb4/lib');
 const loadSound = lib.loadSound;
 /**
  * 指向性激光效果，创建效果时必须在 data 里实现 getX(), getY() ，代表目标位置

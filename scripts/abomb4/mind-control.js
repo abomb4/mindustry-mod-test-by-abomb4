@@ -9,7 +9,7 @@ requirements: [
   copper/1
 ]
 */
-const lib = require('lib');
+const lib = require('/abomb4/lib');
 const loadSound = lib.loadSound;
 
 /** Controlled Effect */

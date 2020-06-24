@@ -1,10 +1,16 @@
+/*
+ * 此文件描述没法挡子弹的冷冻力场，原理复杂，开 mod 服务器时有可能会死。
+ * 如此复杂的原因：(md 一堆 package-private 级别的字段，根本没法继承，只能都重写一遍了)
+ * 1. update 难以定制，想去掉挡子弹的代码很不容易
+ * 2. 力场颜色难以修改，因为 update() 里面写死了 new ShieldEntity，并且力场的渲染是在 Renderer 里写死的
+ */
 
-const lib = require('lib');
+const lib = require('/abomb4/lib');
 
 const theShieldBuffer = new Packages.arc.graphics.gl.FrameBuffer(2, 2);
 
 // const theColor = Pal.accent
-const theColor = Color.purple; // new Color(200, 33, 255, 1);
+const theColor = new Color(0, 200, 255, 1);
 
 const theEntityGroup = Vars.entities.add(BaseEntity).enableMapping();
 const theShieldGroup = Vars.entities.add(BaseEntity, true).enableMapping();
@@ -180,13 +186,29 @@ const shieldEntity = (force, tile) => {
     return e;
 };
 
-const blockType = extendContent(Block, "void-force", {
+
+const freezeEffect = newEffect(40, e => {
+    Draw.color(Liquids.cryofluid.color);
+
+    // seed, amount, length, con
+    Angles.randLenVectors(e.id, 3, 1 + e.fin() * 2, new Floatc2({ get: (x, y) => {
+        Fill.circle(e.x + x, e.y + y, e.fout() * 2.2);
+    }}));
+});
+
+const freezeStatusEffect = new StatusEffect("forceFreeze");
+
+freezeStatusEffect.speedMultiplier = 0.1;
+freezeStatusEffect.armorMultiplier = 0.01;
+freezeStatusEffect.effect = freezeEffect;
+
+const blockType = extendContent(Block, "cold-force", {
     _timerUse: 0,
     getTimerUse() { return this._timerUse; },
     setTimerUse(v) { this._timerUse = v; },
     phaseUseTime: 300,
     phaseRadiusBoost: 100,
-    radius: 400,
+    radius: 240,
     breakage: 80000,
     cooldownNormal: 3,
     cooldownLiquid: 1.5,
@@ -212,7 +234,7 @@ const blockType = extendContent(Block, "void-force", {
         });
         this.phaseUseTime = 300;
         this.phaseRadiusBoost = 100;
-        this.radius = 400;
+        this.radius = 240;
         this.breakage = 80000;
         this.cooldownNormal = 3;
         this.cooldownLiquid = 5;
@@ -245,7 +267,6 @@ const blockType = extendContent(Block, "void-force", {
             entity.getShield().remove();
         }
     },
-    handleDamage(tile) { return 0; },
     update(tile) {
         /* ForceEntity */
         updateShield(tile.ent());
@@ -321,7 +342,7 @@ const blockType = extendContent(Block, "void-force", {
             Vars.unitGroup.intersect(tile.drawx() - realRadius, tile.drawy() - realRadius, realRadius * 2, realRadius * 2, new Cons({
                 get(v) {
                     if (v.getTeam() != tile.getTeam() && Intersector.isInsideHexagon(v.getX(), v.getY(), realRadius * 2, tile.drawx(), tile.drawy())) {
-                        v.remove();
+                        v.applyEffect(freezeStatusEffect, 30);
                     }
                 },
             }));

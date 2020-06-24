@@ -1,16 +1,10 @@
-/*
- * 此文件描述没法挡子弹的冷冻力场，原理复杂，开 mod 服务器时有可能会死。
- * 如此复杂的原因：(md 一堆 package-private 级别的字段，根本没法继承，只能都重写一遍了)
- * 1. update 难以定制，想去掉挡子弹的代码很不容易
- * 2. 力场颜色难以修改，因为 update() 里面写死了 new ShieldEntity，并且力场的渲染是在 Renderer 里写死的
- */
 
-const lib = require('lib');
+const lib = require('/abomb4/lib');
 
 const theShieldBuffer = new Packages.arc.graphics.gl.FrameBuffer(2, 2);
 
 // const theColor = Pal.accent
-const theColor = Color.red;
+const theColor = Color.purple; // new Color(200, 33, 255, 1);
 
 const theEntityGroup = Vars.entities.add(BaseEntity).enableMapping();
 const theShieldGroup = Vars.entities.add(BaseEntity, true).enableMapping();
@@ -97,7 +91,6 @@ const fakeShieldEntity = () => {
                 }
 
                 if (theShieldGroup.countInBounds() > 0) {
-                    // print('complex draw><><>><!');
                     if (settings.getBool("animatedshields") && Shaders.shield != null) {
                         Draw.flush();
                         shieldBuffer.begin();
@@ -187,25 +180,18 @@ const shieldEntity = (force, tile) => {
     return e;
 };
 
-const burnStatusEffect = new StatusEffect("forceBurn");
-
-burnStatusEffect.damage = 6;
-burnStatusEffect.effect = Fx.burning;
-burnStatusEffect.damageMultiplier = 0.01;
-burnStatusEffect.armorMultiplier = 0.01;
-
-const blockType = extendContent(Block, "burn-force", {
+const blockType = extendContent(Block, "void-force", {
     _timerUse: 0,
     getTimerUse() { return this._timerUse; },
     setTimerUse(v) { this._timerUse = v; },
-    phaseUseTime: 200,
+    phaseUseTime: 300,
     phaseRadiusBoost: 100,
-    radius: 0,
-    breakage: 0,
+    radius: 400,
+    breakage: 80000,
     cooldownNormal: 3,
     cooldownLiquid: 1.5,
     cooldownBrokenBase: 5,
-    basePowerDraw: 5,
+    basePowerDraw: 10,
     topRegion: null,
 
     hasEntity() {
@@ -226,8 +212,8 @@ const blockType = extendContent(Block, "burn-force", {
         });
         this.phaseUseTime = 300;
         this.phaseRadiusBoost = 100;
-        this.radius = 80;
-        this.breakage = 100;
+        this.radius = 400;
+        this.breakage = 80000;
         this.cooldownNormal = 3;
         this.cooldownLiquid = 5;
         this.cooldownBrokenBase = 5;
@@ -252,12 +238,14 @@ const blockType = extendContent(Block, "burn-force", {
         Draw.color();
     },
     removed(tile) {
+        this.super$removed(tile);
         const entity = tile.ent();
         unlockUpdateShield(entity);
         if (entity.getShield() != null) {
             entity.getShield().remove();
         }
     },
+    handleDamage(tile) { return 0; },
     update(tile) {
         /* ForceEntity */
         updateShield(tile.ent());
@@ -333,7 +321,7 @@ const blockType = extendContent(Block, "burn-force", {
             Vars.unitGroup.intersect(tile.drawx() - realRadius, tile.drawy() - realRadius, realRadius * 2, realRadius * 2, new Cons({
                 get(v) {
                     if (v.getTeam() != tile.getTeam() && Intersector.isInsideHexagon(v.getX(), v.getY(), realRadius * 2, tile.drawx(), tile.drawy())) {
-                        v.applyEffect(burnStatusEffect, 30);
+                        v.remove();
                     }
                 },
             }));

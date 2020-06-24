@@ -1,5 +1,5 @@
 
-const lib = require('lib');
+const lib = require('/abomb4/lib');
 
 const healBeamFrag = (() => {
 
@@ -120,31 +120,34 @@ const weapon = (() => {
 
     const w = extend(Weapon, {
         load() {
-            this.name = 'ender-weapon';
-            const assetName = lib.modName + '-' + this.name;
-            this.region = Core.atlas.find(
-                assetName + "-equip",
-                Core.atlas.find(assetName + "-equip", Core.atlas.find("clear"))
-            );
-            // print('load ' + assetName + '-equip : ' + this.region);
+            // Add a prefix prevent confliction with other mods
+            this.name = lib.aModName + '-' + 'abomb4-lancer-weapon';
+            this.super$load();
+
+            // const assetName = lib.aModName + '-' + this.name;
+            // this.region = Core.atlas.find(
+            //     assetName + "-equip",
+            //     Core.atlas.find(assetName + "-equip", Core.atlas.find("clear"))
+            // );
+            // print('load ' + this.name + '-equip : ' + this.region);
         },
     });
 
-    w.name = 'ender-weapon';
+    w.name = lib.aModName + '-' + 'abomb4-lancer-weapon';
     w.bullet = landerLaser2;
     w.reload = 10;
     w.shots = 1;
     w.inaccuracy = 0;
     w.shake = 0.5;
     w.recoil = 2;
-    w.length = 1;
+    w.length = 3; // Y length
     w.alternate = true;
     w.shootSound = Sounds.bigshot;
     return w;
 })();
 
 const mech = (() => {
-    const m = extendContent(Mech, 'ender-mech', {
+    const m = extendContent(Mech, 'abomb4-lancer-mech', {
         getExtraArmor(player) {
             return player.shootHeat * 75;
         },

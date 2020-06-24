@@ -1,7 +1,7 @@
 
 // 大 风 车 吱扭吱扭扭地2转
 
-require("lib");
+const lib = require("lib");
 
 const meltdownLaser2 = (() => {
     const tmpColor = new Color();
@@ -82,11 +82,11 @@ bulletType.collidesAir = false;
 const fan = extendContent(PowerTurret, 'meltdown-fan-2', {
     load() {
         this.super$load();
-        this.baseRegion = Core.atlas.find(modName + "-meltdown-fan-2-base");
+        this.baseRegion = Core.atlas.find(lib.aModName + "-meltdown-fan-2-base");
     },
     generateIcons(){
         const list = this.super$generateIcons();
-        list[0] = Core.atlas.find(modName + "-meltdown-fan-2-base");
+        list[0] = Core.atlas.find(lib.aModName + "-meltdown-fan-2-base");
         list[1] = Core.atlas.find(this.name);
         return list;
     },
