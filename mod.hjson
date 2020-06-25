@@ -11,6 +11,7 @@ Already implemented:
 Prism Tower, Cold Shield, Burn Projector, Unlimited Next Wave, Another Core, Cheat Blocks, Mind Control, Meltdown Fan, Chrono Mass Driver, Chrono Vault, Chrono Unloader, Laser Mech, Quantum Launchpad, Void Force (VERY CHEAT), Chrono Bridge
 
 0.14.0：添加时空传送桥；对 Lancer 机甲进行一些微调
+0.14.1：继续尝试修复 Lancer 机甲
 '''
-version: 0.14.0
+version: 0.14.1
 minGameVersion: 103

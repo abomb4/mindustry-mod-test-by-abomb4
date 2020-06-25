@@ -162,23 +162,28 @@ const mech = (() => {
     m.mass = 1.5;
     m.shake = 3;
     m.health = 370;
-    m.hitsize = 15;
     m.mineSpeed = 3;
     m.drillPower = 2;
     m.buildPower = 60;
     m.engineColor = Color.valueOf("98F5FF");
     m.itemCapacity = 600;
     m.turnCursor = true;
-    m.canHeal = false;
+    m.canHeal = true;
     m.compoundSpeed = 8;
     m.compoundSpeedBoost = 3;
     m.drawCell = true;
     m.drawItems = true;
     m.drawLight = true;
     m.engineOffset = 5;
-    // mech.engineSize = 3;
+    m.engineSize = 3;
     m.weaponOffsetY = -2;
     m.weaponOffsetX = 5;
 
     return m;
 })();
+extendContent(MechPad, 'lancer-mech-pad', {
+    load() {
+        this.mech = mech;
+        this.super$load();
+    }
+});
