@@ -14,3 +14,5 @@ require('abomb4/cheat-item');
 require('abomb4/abomb4-lancer-mech');
 require('abomb4/quantum-launchpad');
 require('abomb4/void-force');
+// require('abomb4/multi-liquid-tank');
+require('abomb4/chrono-bridge');

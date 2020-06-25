@@ -1,0 +1,9 @@
+{
+    "category": "liquid",
+    "size": 3,
+    "health": 500,
+    "hasLiquids": true,
+    "liquidCapacity": 4500,
+    "requirements": [],
+    "research": "liquid-tank"
+}
