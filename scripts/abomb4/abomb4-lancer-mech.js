@@ -55,7 +55,6 @@ const globalLancerMechShield = (() => {
         function charge(num) {
             if (num > 0) {
                 setPower(Math.min(getPower() + CHARGE_STEP * num, MAX_CHARGE));
-                print('chargeNum: ' + CHARGE_STEP * num + ', afterPower: ' + getPower());
             }
 
             if (getPower() > MAX_CHARGE * MIN_CHARGE_PERCENT) {
