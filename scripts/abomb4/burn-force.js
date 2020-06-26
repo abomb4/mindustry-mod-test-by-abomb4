@@ -121,6 +121,7 @@ const fakeShieldEntity = () => {
             },
 
             drawSimple() {
+                theShieldGroup.draw(boolf(shield => true), cons(v => v.drawSimple()));
                 // print('ds!');
             },
         }, null, fakeTile)

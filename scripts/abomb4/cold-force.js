@@ -120,7 +120,7 @@ const fakeShieldEntity = () => {
             },
 
             drawSimple() {
-                // print('ds!');
+                theShieldGroup.draw(boolf(shield => true), cons(v => v.drawSimple()));
             },
         }, null, fakeTile)
         x.add();
