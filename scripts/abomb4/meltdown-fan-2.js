@@ -1,7 +1,7 @@
 
 // 大 风 车 吱扭吱扭扭地2转
 
-const lib = require("/abomb4/lib");
+const lib = require('abomb4/lib');
 
 const meltdownLaser2 = (() => {
     const tmpColor = new Color();
