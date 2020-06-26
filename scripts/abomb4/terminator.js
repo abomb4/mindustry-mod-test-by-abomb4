@@ -151,9 +151,11 @@ const terminator = (() => {
     //     },
     // });
     const unit = extendContent(UnitType, 'terminator-unit', {
-
+        load() {
+            this.create(prov(() => new GroundUnit()));
+            this.weapon = superHealBeamShotgunWeapon;
+            this.super$load();
+        },
     });
-    unit.constructor = prov(() => new GroundUnit());
-    unit.weapon = superHealBeamShotgunWeapon;
     return unit;
 })();

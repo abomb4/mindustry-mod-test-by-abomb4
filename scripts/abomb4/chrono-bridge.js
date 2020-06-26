@@ -117,22 +117,27 @@ const chronoBridge = (() => {
             const itemCapacity = this.itemCapacity;
 
             var entity = tile.ent();
-            var other = Vars.world.tile(entity.link);
+            if (entity) {
+                var other = Vars.world.tile(entity.link);
 
-            if (!this.linkValid(tile, other)) {
-                return source.block() == this && source.ent().link == tile.pos() && tile.entity.items.total() < itemCapacity;
+                if (!this.linkValid(tile, other)) {
+                    return source.block() == this && source.ent().link == tile.pos() && tile.entity.items.total() < itemCapacity;
+                }
+
+                return tile.entity.items.total() < itemCapacity;
             }
-
-            return tile.entity.items.total() < itemCapacity;
+            return false;
         },
         update(tile) {
             this.super$update(tile);
 
             // Try dump liquid if not be connected
             var entity = tile.ent();
-            var other = Vars.world.tile(entity.link);
-            if(!this.linkValid(tile, other)){
-                this.tryDumpLiquid(tile, entity.liquids.current());
+            if (entity) {
+                var other = Vars.world.tile(entity.link);
+                if(!this.linkValid(tile, other)){
+                    this.tryDumpLiquid(tile, entity.liquids.current());
+                }
             }
         },
         // acceptLiquid(tile, source, liquid, amount) {
