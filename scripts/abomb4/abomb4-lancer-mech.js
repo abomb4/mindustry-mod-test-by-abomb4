@@ -6,13 +6,13 @@ const globalLancerMechShield = (() => {
     const SHIELD_ID = 0;
 
     const map = {}
-    const MAX_CHARGE = 2000;
-    const CHARGE_STEP = 6;
-    const MAX_RADIUS = 24;
-    const MIN_RADIUS = 12;
-    const MAX_RADIUS_PRECENT = 0.5;
-    const MIN_RADIUS_PERCENT = 0.2;
-    const MIN_CHARGE_PERCENT = 0.2;
+    const MAX_CHARGE = 2000;        // 最大血量
+    const CHARGE_STEP = 30;         // 每次充能量，目前是发射一个子弹充多少能，散弹则乘以弹数
+    const MAX_RADIUS = 24;          // 最大范围
+    const MIN_RADIUS = 12;          // 最小范围
+    const MAX_RADIUS_PRECENT = 0.5; // 最大范围临界血量
+    const MIN_RADIUS_PERCENT = 0.2; // 最小范围临界血量
+    const MIN_CHARGE_PERCENT = 0.2; // 被打爆后充能到多少才生效
 
     function PlayerShield(player) {
         var entity = {
@@ -33,7 +33,6 @@ const globalLancerMechShield = (() => {
             trait.absorb();
             Effects.effect(Fx.absorb, trait);
             setPower(getPower() - trait.getShieldDamage())
-            print('damage: ' + trait.getShieldDamage() + ', power left: ' + getPower());
             if (getPower() <= 0) {
                 setPower(0);
                 setBroken(true);
@@ -55,8 +54,8 @@ const globalLancerMechShield = (() => {
 
         function charge(num) {
             if (num > 0) {
-                print('charge: ' + CHARGE_STEP * num);
                 setPower(Math.min(getPower() + CHARGE_STEP * num, MAX_CHARGE));
+                print('chargeNum: ' + CHARGE_STEP * num + ', afterPower: ' + getPower());
             }
 
             if (getPower() > MAX_CHARGE * MIN_CHARGE_PERCENT) {
@@ -130,6 +129,7 @@ const globalLancerMechShield = (() => {
         },
     };
 })();
+// 注意，只能安装到机甲上，不能给敌人
 const lancerLaser2 = (() => {
     const tmpColor = new Color();
     const colors = [Pal.lancerLaser.cpy().mul(1, 1, 1, 0.4), Pal.lancerLaser, Color.white];
@@ -138,6 +138,7 @@ const lancerLaser2 = (() => {
     const lenscales = [1, 1.1, 1.13, 1.17];
     const length = 160;
 
+    const tmpShieldBullet = {};
     const bt = extend(BasicBulletType, {
         init(b) {
             if (b) {
@@ -160,6 +161,19 @@ const lancerLaser2 = (() => {
                 }
             }
             Draw.reset();
+        },
+        update(b) {
+            this.super$update(b);
+            // 只能安装到机甲上，不能给敌人的原因在这里，关联了护盾
+            if (!tmpShieldBullet[b.getID()]) {
+                tmpShieldBullet[b.getID()] = true;
+                var player = b.getOwner();
+                var shield = globalLancerMechShield.getShield(player, false);
+                shield.charge(1);
+                Time.run(this.lifetime + 12, run(() => {
+                    delete tmpShieldBullet[b.getID()];
+                }));
+            }
         },
     });
 
@@ -214,7 +228,7 @@ const mech = (() => {
         },
         updateAlt(player) {
             var shield = globalLancerMechShield.getShield(player, false);
-            shield.charge(player.isShooting() ? 1 : 0);
+            // shield.charge(player.isShooting() ? 1 : 0);
             shield.defence();
         },
         draw(player) {
@@ -252,9 +266,10 @@ const mech = (() => {
     return m;
 })();
 // So I move the definition to js, 'content error' again?
-extendContent(MechPad, 'lancer-mech-pad', {
+const mechPad = extendContent(MechPad, 'lancer-mech-pad', {
     load() {
         this.mech = mech;
         this.super$load();
     },
 });
+mechPad.mech = mech;

@@ -20,10 +20,10 @@ const healBeamFrag = (() => {
             this.super$load();
             this.healPercent = 5;
             this.speed = 3;
-            this.damage = 10;
+            this.damage = 6;
             this.homingPower = 15;
             this.homingRange = 50;
-            this.splashDamage = 5;
+            this.splashDamage = 3;
             this.splashDamageRadius = 10;
             this.hitEffect = hitEffect;
             this.lifetime = 20;
@@ -80,7 +80,7 @@ const healBeam = (() => {
             this.hitEffect = hitEffect;
             this.fragBullet = healBeamFrag;
             this.fragBullets = 6;
-            this.lifetime = 70;
+            this.lifetime = 60;
         },
         draw(b) {
             Draw.color(Pal.heal);
@@ -130,17 +130,24 @@ const superHealBeamShotgunWeapon = (() => {
     w.name = fullName;
     w.bullet = healBeam;
     w.inaccuracy = 0;
-    w.shots = 12;
-    w.spacing = 6;
+    w.shots = 4;
+    w.spacing = 2;
+    w.reload = 30;
+    w.shotDelay = 3;
 
-    w.reload = 60;
+    w.length = 16;
+    w.width = 22;
     w.shake = 0.5;
     w.recoil = 2;
-    w.length = 6; // Y length
     w.alternate = true;
-    w.shootSound = Sounds.bigshot;
+    w.shootSound = Sounds.shootBig;
     return w;
 })();
+
+// 构建多武器集合，目前集合武器不能给 player 用
+function makeGroupWeapon(mainWeapon, weapons) {
+
+}
 
 const terminator = (() => {
 

@@ -10,7 +10,7 @@ This is an experimental mod, implements some funny function using js.
 Already implemented:
 Prism Tower, Cold Shield, Burn Projector, Unlimited Next Wave, Another Core, Cheat Blocks, Mind Control, Meltdown Fan, Chrono Mass Driver, Chrono Vault, Chrono Unloader, Laser Mech, Quantum Launchpad, Void Force (VERY CHEAT), Chrono Bridge
 
-0.15.0：Lancer 机甲添加护盾，可开火恢复
+0.15.1：Lancer 机甲护盾现在以发射子弹数量为充能方式
 '''
-version: 0.15.0
+version: 0.15.1
 minGameVersion: 103

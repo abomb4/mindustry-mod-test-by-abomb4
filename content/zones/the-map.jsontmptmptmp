@@ -1,0 +1,25 @@
+{
+    "name": "Nuclear array",
+    "description": "Our army has mastered the breach. Please be careful of the enemy's new type of arms and act carefully",
+    "conditionWave": 10,
+    "loadout": "basicFoundation",
+    "startingItems": [
+        {"item": "copper", "amount": 600},
+        {"item": "lead", "amount": 400},
+        {"item": "graphite", "amount": 250},
+        {"item": "silicon", "amount": 250}
+    ],
+    "requirements": [
+        {
+            "type": "ZoneWave",
+            "zone": "desolateRift",
+            "wave": 80
+        },
+        {
+            "type": "Unlock",
+            "block": "lancer-mech-pad"
+        }
+
+    ],
+    "resources": ["copper", "lead", "coal", "sand","titanium","thorium"]
+}

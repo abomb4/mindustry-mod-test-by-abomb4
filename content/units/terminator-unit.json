@@ -4,7 +4,7 @@
     "mass": 5,
     "hitsize": 30,
     "flying": false,
-    "health": 60000,
+    "health": 32000,
     "rotateWeapon": false,
     "engineOffset": 27.5,
     "engineSize": 6,
