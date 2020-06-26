@@ -1,0 +1,14 @@
+{
+    "speed": 0.12,
+    "drag": 0.4,
+    "mass": 5,
+    "hitsize": 30,
+    "flying": false,
+    "health": 60000,
+    "rotateWeapon": false,
+    "engineOffset": 27.5,
+    "engineSize": 6,
+    "weaponOffsetY": 5,
+    "rotatespeed": 0.2,
+    "baseRotateSpeed": 0.2
+}

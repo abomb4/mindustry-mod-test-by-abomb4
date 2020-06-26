@@ -5,7 +5,7 @@
  * 2. 力场颜色难以修改，因为 update() 里面写死了 new ShieldEntity，并且力场的渲染是在 Renderer 里写死的
  */
 
-const lib = require('/abomb4/lib');
+const lib = require('abomb4/lib');
 
 const theShieldBuffer = new Packages.arc.graphics.gl.FrameBuffer(2, 2);
 

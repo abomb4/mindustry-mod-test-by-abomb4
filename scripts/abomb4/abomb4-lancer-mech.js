@@ -1,76 +1,7 @@
 
-const lib = require('/abomb4/lib');
+const lib = require('abomb4/lib');
 
-const healBeamFrag = (() => {
-
-    const hitEffect = newEffect(8, (e) => {
-        Draw.color(Color.white, Pal.heal, e.fin());
-        Lines.stroke(0.5 + e.fout());
-        Lines.circle(e.x, e.y, e.fin() * 10);
-    });
-
-    const bt = extend(HealBulletType, {
-        init(b) {
-            if (b) {
-                this.super$init(b);
-                this.healPercent = 5;
-                this.speed = 3;
-                this.damage = 10;
-                this.homingPower = 15;
-                this.splashDamage = 5;
-                this.splashDamageRadius = 10;
-                this.hitEffect = hitEffect;
-                this.lifetime = 20;
-            }
-        },
-        draw(b) {
-            Draw.color(Pal.heal);
-            Lines.stroke(1);
-            Lines.lineAngleCenter(b.x, b.y, b.rot(), 6);
-            Draw.color(Color.white);
-            Lines.lineAngleCenter(b.x, b.y, b.rot(), 1);
-            Draw.reset();
-        },
-    });
-    return bt;
-})();
-const healBeam = (() => {
-
-    const hitEffect = newEffect(8, (e) => {
-        Draw.color(Color.white, Pal.heal, e.fin());
-        Lines.stroke(0.5 + e.fout());
-        Lines.circle(e.x, e.y, e.fin() * 30);
-    });
-
-    const bt = extend(HealBulletType, {
-        init(b) {
-            if (b) {
-                this.super$init(b);
-                this.healPercent = 10;
-                this.speed = 7;
-                this.damage = 30;
-                this.homingPower = 50;
-                this.splashDamage = 10;
-                this.splashDamageRadius = 30;
-                this.hitEffect = hitEffect;
-                this.fragBullet = healBeamFrag;
-                this.fragBullets = 3;
-                this.lifetime = 40;
-            }
-        },
-        draw(b) {
-            Draw.color(Pal.heal);
-            Lines.stroke(2);
-            Lines.lineAngleCenter(b.x, b.y, b.rot(), 15);
-            Draw.color(Color.white);
-            Lines.lineAngleCenter(b.x, b.y, b.rot(), 1);
-            Draw.reset();
-        },
-    });
-    return bt;
-})();
-
-const landerLaser2 = (() => {
+const lancerLaser2 = (() => {
     const tmpColor = new Color();
     const colors = [Pal.lancerLaser.cpy().mul(1, 1, 1, 0.4), Pal.lancerLaser, Color.white];
     const tscales = [1, 0.7, 0.5, 0.2];
@@ -116,7 +47,7 @@ const landerLaser2 = (() => {
     return bt;
 })();
 
-const weapon = (() => {
+const lancerLaserWeapon = (() => {
 
     const w = extend(Weapon, {
         load() {
@@ -134,13 +65,14 @@ const weapon = (() => {
     });
 
     w.name = lib.aModName + '-' + 'abomb4-lancer-weapon';
-    w.bullet = landerLaser2;
-    w.reload = 10;
-    w.shots = 1;
+    w.bullet = lancerLaser2;
     w.inaccuracy = 0;
+    w.shots = 1;
+
+    w.reload = 10;
     w.shake = 0.5;
     w.recoil = 2;
-    w.length = 3; // Y length
+    w.length = 6; // Y length
     w.alternate = true;
     w.shootSound = Sounds.bigshot;
     return w;
@@ -153,7 +85,7 @@ const mech = (() => {
         },
     });
 
-    m.weapon = weapon;
+    m.weapon = lancerLaserWeapon;
     m.flying = false;
     m.speed = 0.2;
     m.maxSpeed = 5;
@@ -181,6 +113,7 @@ const mech = (() => {
 
     return m;
 })();
+// So I move the definition to js, 'content error' again?
 extendContent(MechPad, 'lancer-mech-pad', {
     load() {
         this.mech = mech;

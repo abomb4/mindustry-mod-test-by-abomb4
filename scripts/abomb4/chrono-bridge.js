@@ -1,5 +1,5 @@
 
-const lib = require('/abomb4/lib');
+const lib = require('abomb4/lib');
 
 const chronoBridge = (() => {
 
