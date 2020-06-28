@@ -20,12 +20,15 @@ const globalLancerMechShield = (() => {
             id: ++SHIELD_ID,
             power: MAX_CHARGE / 2,
             broken: false,
-            hit: 0
+            hit: 0,
+            chargeEffectEnergy: 0,
         };
         function setPower(v) { entity.power = v; }
         function getPower() { return entity.power; }
         function setHit(v) { entity.hit = v; }
         function getHit() { return entity.hit; }
+        function setChargeEffectEnergy(v) { entity.chargeEffectEnergy = v; }
+        function getChargeEffectEnergy() { return entity.chargeEffectEnergy; }
         function setBroken(v) { entity.broken = v; }
         function getBroken() { return entity.broken; }
 
@@ -60,12 +63,21 @@ const globalLancerMechShield = (() => {
             if (getPower() > MAX_CHARGE * MIN_CHARGE_PERCENT) {
                 setBroken(false);
             }
+            if (getPower() != MAX_CHARGE && !getBroken()) {
+                setChargeEffectEnergy(1);
+                // Effects.effect(chargeEffect, entity.player.x, entity.player.y, 0, {
+                //     activeRadius: () => activeRadius()
+                // });
+            }
         }
 
         function tryAbsorb() {
             const realRadius = activeRadius();
-            if(getHit() > 0){
+            if (getHit() > 0) {
                 setHit(getHit() - 1 / 5 * Time.delta());
+            }
+            if (getChargeEffectEnergy() > 0) {
+                setChargeEffectEnergy(getChargeEffectEnergy() - 1 / 4 * Time.delta());
             }
             var me = entity.player;
             Vars.bulletGroup.intersect(me.x - realRadius, me.y - realRadius, realRadius * 2, realRadius * 2, cons((trait) => {
@@ -101,6 +113,12 @@ const globalLancerMechShield = (() => {
             Fill.circle(x, y, activeRadius());
             Draw.color();
 
+            // charge
+            Draw.color(Pal.heal);
+            Draw.alpha(entity.chargeEffectEnergy * 0.5);
+            Fill.circle(x, y, activeRadius());
+            Draw.color();
+
             Draw.reset();
         }
         function debugDump() {
@@ -131,17 +149,67 @@ const globalLancerMechShield = (() => {
 // 注意，只能安装到机甲上，不能给敌人
 const lancerLaser2 = (() => {
     const tmpColor = new Color();
-    const colors = [Pal.lancerLaser.cpy().mul(1, 1, 1, 0.4), Pal.lancerLaser, Color.white];
+    const colors = [Pal.heal.cpy().mul(1, 1, 1, 0.4), Pal.heal, Pal.heal];
     const tscales = [1, 0.7, 0.5, 0.2];
     const strokes = [2, 1.5, 1, 0.3];
     const lenscales = [1, 1.1, 1.13, 1.17];
     const length = 160;
 
-    const tmpShieldBullet = {};
+    const shootEffect = newEffect(12, e => {
+        Draw.color(Pal.heal);
+        const signs = Mathf.signs;
+        for(var i in signs){
+            var num = signs[i];
+            Drawf.tri(e.x, e.y, 4 * e.fout(), 18, e.rotation + 100 * num);
+        }
+    });
+
+    const shootSmokeEffect = newEffect(12, e => {
+        Draw.color(Pal.heal);
+        Fill.circle(e.x, e.y, e.fout() * 4);
+    });
+
+    const noRepeatBullet = {};
     const bt = extend(BasicBulletType, {
         init(b) {
             if (b) {
                 Damage.collideLine(b, b.getTeam(), this.hitEffect, b.x, b.y, b.rot(), length);
+
+                // try heal friend tiles
+                const large = false;
+                var tr = new Vec2();
+                tr.trns(b.rot(), length);
+                var collidedBlocks = new IntSet();
+                var collider = new Intc2({
+                    get: (cx, cy) => {
+                        var tile = Vars.world.ltile(cx, cy);
+
+                        if (tile != null && tile.entity != null && tile.getTeam() == b.getTeam() && tile.entity.maxHealth() != tile.entity.health && (tile.block() != BuildBlock)) {
+                            Effects.effect(Fx.healBlockFull, Pal.heal, tile.drawx(), tile.drawy(), tile.block().size);
+                            tile.entity.healBy(this.healPercent / 100 * tile.entity.maxHealth());
+                        }
+                        // if (tile != null && !collidedBlocks.contains(tile.pos()) && tile.entity != null && tile.getTeamID() == team.id && tile.entity.collide(b)) {
+                        //     tile.entity.collision(b);
+                        //     collidedBlocks.add(tile.pos());
+                        //     b.getBulletType().hit(b, tile.worldx(), tile.worldy());
+                        // }
+                    }
+                });
+
+                print(b.x + ' =-= ' + b.y);
+                print(tr.x + ' -=- ' + tr.y);
+                Vars.world.raycastEachWorld(b.x, b.y, b.x + tr.x, b.y + tr.y, new World.Raycaster({
+                    accept: (cx, cy) => {
+                        collider.get(cx, cy);
+                        if (large) {
+                            for (var i in Geometry.d4) {
+                                var p = Geometry.d4[i];
+                                collider.get(cx + p.x, cy + p.y);
+                            }
+                        }
+                        return false;
+                    }
+                }));
             }
         },
         range() {
@@ -162,29 +230,32 @@ const lancerLaser2 = (() => {
             Draw.reset();
         },
         update(b) {
-            this.super$update(b);
             // 只能安装到机甲上，不能给敌人的原因在这里，关联了护盾
-            if (!tmpShieldBullet[b.getID()]) {
-                tmpShieldBullet[b.getID()] = true;
+            if (!noRepeatBullet[b.getID()]) {
+                noRepeatBullet[b.getID()] = true;
                 var player = b.getOwner();
                 var shield = globalLancerMechShield.getShield(player, false);
                 shield.charge(1);
                 Time.run(this.lifetime + 12, run(() => {
-                    delete tmpShieldBullet[b.getID()];
+                    delete noRepeatBullet[b.getID()];
                 }));
             }
         },
     });
 
+    bt.healPercent = 5;
     bt.hitEffect = Fx.hitLancer;
     bt.despawnEffect = Fx.none;
     bt.speed = 0.01;
     bt.hitSize = 4;
     bt.drawSize = 420;
-    bt.damage = 70;
+    bt.damage = 45;
     bt.lifetime = 16;
     bt.pierce = true;
     bt.keepVelocity = false;
+    bt.collidesTiles = false;
+    bt.shootEffect = shootEffect;
+    bt.smokeEffect = shootSmokeEffect;
 
     return bt;
 })();
@@ -214,13 +285,19 @@ const lancerLaserWeapon = (() => {
     w.reload = 10;
     w.shake = 0.5;
     w.recoil = 2;
-    w.length = 6; // Y length
+    w.length = 4; // Y length
     w.alternate = true;
-    w.shootSound = Sounds.bigshot;
+    // w.shootSound = Sounds.pew;
+    lib.loadSound("healLaser.ogg", s => w.shootSound = s);
+    w.shootSound = Sounds.pew;
     return w;
 })();
 
 const mech = (() => {
+    const healRange = 60;
+    const healAmount = 20;
+    const healReload = 120;
+    var wasHealed;
     const m = extendContent(Mech, 'abomb4-lancer-mech', {
         getExtraArmor(player) {
             return player.shootHeat * 75;
@@ -229,6 +306,23 @@ const mech = (() => {
             var shield = globalLancerMechShield.getShield(player, false);
             // shield.charge(player.isShooting() ? 1 : 0);
             shield.defence();
+
+            if (player.timer.get(Player.timerAbility, healReload)) {
+                wasHealed = false;
+
+                Units.nearby(player.getTeam(), player.x, player.y, healRange, cons(unit => {
+                    if (unit.health < unit.maxHealth()) {
+                        Effects.effect(Fx.heal, unit);
+                        wasHealed = true;
+                    }
+                    unit.healBy(healAmount);
+                }));
+
+                shield.charge(2);
+                if (wasHealed) {
+                    Effects.effect(Fx.healWave, player);
+                }
+            }
         },
         draw(player) {
             var shield = globalLancerMechShield.getShield(player, false);
@@ -238,16 +332,16 @@ const mech = (() => {
 
     m.weapon = lancerLaserWeapon;
     m.flying = false;
-    m.speed = 0.2;
-    m.maxSpeed = 5;
-    m.boostSpeed = 2;
-    m.drag = 0.09;
-    m.mass = 1.5;
+    m.speed = 0.5;
+    m.boostSpeed = 1.6;
+    m.drag = 0.3;
+    m.mass = 3;
     m.shake = 3;
-    m.health = 370;
-    m.mineSpeed = 3;
-    m.drillPower = 2;
-    m.buildPower = 60;
+    m.health = 380;
+    m.mineSpeed = 6;
+    m.drillPower = 8;
+    m.buildPower = 3.2;
+    // m.buildPower = 60;
     m.engineColor = Color.valueOf("98F5FF");
     m.itemCapacity = 600;
     m.turnCursor = true;

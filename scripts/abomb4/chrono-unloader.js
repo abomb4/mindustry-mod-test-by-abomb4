@@ -25,7 +25,7 @@ extendContent(Unloader, "chrono-unloader", {
     update(tile) {
         const entity = tile.ent();
 
-        for (var i = 12; i > 0; i--) {
+        for (var i = 13; i > 0; i--) {
 
             if (tile.entity.items.total() == 0) {
                 const proximity = tile.entity.proximity();
