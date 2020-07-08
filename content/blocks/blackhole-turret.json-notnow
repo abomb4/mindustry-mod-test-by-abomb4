@@ -1,0 +1,14 @@
+{
+  "health": 2800,
+  "size": 3,
+  "reload": 420,
+  "range": 500,
+  "ammoUseEffect": "shellEjectSmall",
+  "inaccuracy": 0,
+  "rotatespeed": 70,
+  "powerUse": 1,
+  "requirements": [
+  ],
+  "category": "turret",
+  "research": "duo"
+}

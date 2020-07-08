@@ -10,7 +10,7 @@ This is an experimental mod, implements some funny function using js.
 Already implemented:
 Prism Tower, Cold Shield, Burn Projector, Unlimited Next Wave, Another Core, Cheat Blocks, Mind Control, Meltdown Fan, Chrono Mass Driver, Chrono Vault, Chrono Unloader, Laser Mech, Quantum Launchpad, Void Force (VERY CHEAT), Chrono Bridge, Shielded Mech, Teleporter
 
-0.17.0：添加传送门，可传送陆地单位
+0.18.0：添加无敌围墙；尝试修复传送器有时连不了的问题
 '''
-version: 0.17.0
+version: 0.18.0
 minGameVersion: 103

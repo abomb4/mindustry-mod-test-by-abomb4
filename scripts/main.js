@@ -18,3 +18,5 @@ require('abomb4/void-force');
 require('abomb4/chrono-bridge');
 require('abomb4/terminator');
 require('abomb4/teleporter');
+// require('abomb4/blackhole-turret');
+require('abomb4/invincible-blocks');
