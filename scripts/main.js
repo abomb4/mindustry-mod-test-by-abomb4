@@ -17,3 +17,4 @@ require('abomb4/void-force');
 // require('abomb4/multi-liquid-tank');
 require('abomb4/chrono-bridge');
 require('abomb4/terminator');
+require('abomb4/teleporter');

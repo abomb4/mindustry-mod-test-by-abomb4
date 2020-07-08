@@ -51,3 +51,7 @@ exports.playerShield = (() => {
         update(player) {},
     };
 })();
+
+exports.loadRegion = function(name) {
+    return Core.atlas.find(exports.aModName + '-' + name, Core.atlas.find("clear"))
+}

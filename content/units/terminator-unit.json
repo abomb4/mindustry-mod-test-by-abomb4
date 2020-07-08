@@ -1,7 +1,7 @@
 {
     "speed": 0.12,
     "drag": 0.4,
-    "mass": 5,
+    "mass": 50,
     "hitsize": 30,
     "flying": false,
     "health": 32000,

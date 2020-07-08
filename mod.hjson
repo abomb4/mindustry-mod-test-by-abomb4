@@ -5,12 +5,12 @@ description: '''
 这是一个实验性 mod，用 js 写点奇怪的功能。
 This is an experimental mod, implements some funny function using js.
 
-已实现：光棱塔、冷冻力场、燃烧力场、无限跳波方块、额外核心、三大作弊方块、心灵控制、熔毁大风车、激光机甲、量子发射台、虚空力场（过于玩赖）、时空传送桥、护盾机甲
+已实现：光棱塔、冷冻力场、燃烧力场、无限跳波方块、额外核心、三大作弊方块、心灵控制、熔毁大风车、激光机甲、量子发射台、虚空力场（过于玩赖）、时空传送桥、护盾机甲、传送门
 
 Already implemented:
-Prism Tower, Cold Shield, Burn Projector, Unlimited Next Wave, Another Core, Cheat Blocks, Mind Control, Meltdown Fan, Chrono Mass Driver, Chrono Vault, Chrono Unloader, Laser Mech, Quantum Launchpad, Void Force (VERY CHEAT), Chrono Bridge, Shielded Mech
+Prism Tower, Cold Shield, Burn Projector, Unlimited Next Wave, Another Core, Cheat Blocks, Mind Control, Meltdown Fan, Chrono Mass Driver, Chrono Vault, Chrono Unloader, Laser Mech, Quantum Launchpad, Void Force (VERY CHEAT), Chrono Bridge, Shielded Mech, Teleporter
 
-0.16.0：Lancer 机甲改名 Tancer 机甲，有治愈效果，削弱攻击力
+0.17.0：添加传送门，可传送陆地单位
 '''
-version: 0.16.0
+version: 0.17.0
 minGameVersion: 103

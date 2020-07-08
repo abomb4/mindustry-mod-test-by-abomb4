@@ -1,0 +1,21 @@
+{
+    "size": 2,
+    "hasItems": false,
+    "configurable": true,
+    "unloadable": true,
+    "breakable": true,
+    "solid": false,
+    "health": 400,
+    "requirements": [
+        { "item": "copper", "amount": 300 },
+        { "item": "titanium", "amount": 70 },
+        { "item": "graphite", "amount": 100 },
+        { "item": "silicon", "amount": 80 },
+        { "item": "phase-fabric", "amount": 440 }
+    ],
+    "consumes": {
+        "power": 5
+    },
+    "category": "defense",
+    "research": "door-large"
+}

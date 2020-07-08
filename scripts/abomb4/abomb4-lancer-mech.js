@@ -196,8 +196,6 @@ const lancerLaser2 = (() => {
                     }
                 });
 
-                print(b.x + ' =-= ' + b.y);
-                print(tr.x + ' -=- ' + tr.y);
                 Vars.world.raycastEachWorld(b.x, b.y, b.x + tr.x, b.y + tr.y, new World.Raycaster({
                     accept: (cx, cy) => {
                         collider.get(cx, cy);
