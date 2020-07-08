@@ -151,7 +151,7 @@ const teleporter = (() => {
             return other.block() == this
                 && !tile.ent().getConnected()
                 && (!other.ent().getConnected() || (tile.ent().getTarget() == other.pos()))
-                && other.ent().getTarget() == Pos.invalid
+                && !(Vars.world.tile(other.ent().getTarget()))
                 && tile.withinDst(other, RANGE * Vars.tilesize);
         },
         tryInvalidOriginTarget(tile) {
