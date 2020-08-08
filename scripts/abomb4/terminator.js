@@ -253,7 +253,7 @@ const lancerLaserWeapon = (() => {
     return w;
 })();
 
-// 构建多武器集合，目前集合武器不能给 player 用
+// 构建多武器集合，目前集合武器不能给 player 用.
 function makeGroupWeapon(mainWeapon, weapons) {
 
     // Create virtual shooter for every sub weapons

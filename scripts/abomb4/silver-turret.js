@@ -289,20 +289,16 @@ pointingLaserBulletType.collides = false;
 const pointingLaserTurretEntity = () => {
     var _myChargingEnergy = 0;
     var _myCharging = false;
-    var _readyShoot = false;
     var obj = extend(Turret.TurretEntity, {
         // 充能量
         _myChargingEnergy: 0,
         // 有敌人在视野中
         _myCharging: false,
-        _readyShoot: false,
 
         setMyChargingEnergy(v) { _myChargingEnergy = v; },
         setMyCharging(v) { _myCharging = v; },
-        setReadyShoot(v) { _readyShoot = v; },
         getMyChargingEnergy() { return _myChargingEnergy; },
         getMyCharging() { return _myCharging; },
-        getReadyShoot() { return _readyShoot; },
     });
     return obj;
 };
@@ -338,7 +334,14 @@ const pointingLaserTurret = extendContent(PowerTurret, "silver-turret", {
 
         if (entity.getMyCharging()) {
             entity.setMyChargingEnergy(entity.getMyChargingEnergy() + 1);
-            // print('Charge:' + entity.getMyChargingEnergy());
+            print(entity.id + ' Charge:' + entity.getMyChargingEnergy());
+        }
+
+        // cooldown
+        if (entity.getMyCharging() && entity.getMyChargingEnergy() > (this.chargeTime + this.cooldownDelay)) {
+            print(entity.id + ' Cool down!');
+            entity.setMyCharging(false);
+            entity.setMyChargingEnergy(0);
         }
     },
 
@@ -367,7 +370,7 @@ const pointingLaserTurret = extendContent(PowerTurret, "silver-turret", {
             var tr = this.tr;
 
             if (!entity.getMyCharging()) {
-                // print('Play the charging animation!');
+                print(entity.id + ' Play the charging animation!');
                 entity.setMyCharging(true);
                 this.chargeSound.at(tile, Mathf.random(0.9, 1.1));
                 Effects.effect(this.chargeBeginEffect, tile.drawx() + tr.x, tile.drawy() + tr.y, entity.rotation);
@@ -378,28 +381,10 @@ const pointingLaserTurret = extendContent(PowerTurret, "silver-turret", {
                         Effects.effect(this.chargeEffect, tile.drawx() + tr.x, tile.drawy() + tr.y, entity.rotation);
                     }));
                 }
-                const the = this;
-                // 经过一段 delay 准备发射
-                Time.run(this.chargeTime, run(() => {
-                    // print('Ready Shot!');
-                    entity.setReadyShoot(true);
-                }));
-                // 经过一长段时间进行 cooldown
-                Time.run(this.chargeTime + this.cooldownDelay, run(() => {
-                    if (entity.getMyCharging() && entity.getReadyShoot() && entity.getMyChargingEnergy() > the.chargeTime) {
-                        // print('Cool down!');
-                        entity.setReadyShoot(false);
-                        entity.setMyCharging(false);
-                        entity.setMyChargingEnergy(0);
-                    } else {
-                        // print('Not cooldown! charging: ' + entity.getMyCharging() + ',readyShoot: ' + entity.getReadyShoot() + ',energy: ' + entity.getMyChargingEnergy());
-                    }
-                }));
             }
-            if (entity.getReadyShoot()) {
-                // print('Fire!');
+            if (entity.getMyChargingEnergy() > this.chargeTime) {
+                print(entity.id + ' Fire!');
                 this.shoot(tile, type);
-                entity.setReadyShoot(false);
                 entity.setMyCharging(false);
                 entity.setMyChargingEnergy(0);
 

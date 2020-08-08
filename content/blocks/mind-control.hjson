@@ -6,6 +6,7 @@ ammoUseEffect: shellEjectSmall
 inaccuracy: 0
 rotatespeed: 122
 powerUse: 0.1
+targetInterval: 0
 requirements: [
   copper/1
 ]

@@ -14,7 +14,7 @@ const biu = newEffect(50, e => {
     // Draw.reset();
 });
 
-const 超时空包裹 = extend(MassDriverBolt, {
+const ChronoMassDriverBolt = extend(MassDriverBolt, {
 
     draw(b) {
     },
@@ -94,7 +94,7 @@ const chronoMassDriver = extendContent(MassDriver, "chrono-mass-driver", {
 
         const transX = Angles.trnsx(angle, translation);
         const transY = Angles.trnsy(angle, translation);
-        var b = Bullet.create(超时空包裹, entity, entity.getTeam(),
+        var b = Bullet.create(ChronoMassDriverBolt, entity, entity.getTeam(),
             tile.drawx() + transX,
             tile.drawy() + transY,
             angle, 12, 12, data);
