@@ -140,21 +140,21 @@ const chronoBridge = (() => {
                 }
             }
         },
-        // acceptLiquid(tile, source, liquid, amount) {
-        //     if (tile.getTeam() != source.getTeam() || !this.hasLiquids) return false;
+        acceptLiquid(tile, source, liquid, amount) {
+            if (tile.getTeam() != source.getTeam() || !this.hasLiquids) return false;
 
-        //     var entity = tile.ent();
-        //     var other = Vars.world.tile(entity.link);
+            var entity = tile.ent();
+            var other = Vars.world.tile(entity.link);
 
-        //     if (this.linkValid(tile, other)) {
-        //         return true;
-        //     } else if (!(source.block() == this && source.ent().link == tile.pos())) {
-        //         return false;
-        //     }
+            if (this.linkValid(tile, other)) {
+                return true;
+            } else if (!(source.block() == this && source.ent().link == tile.pos())) {
+                return false;
+            }
 
-        //     return tile.entity.liquids.get(liquid) + amount < liquidCapacity
-        //         && (tile.entity.liquids.current() == liquid || tile.entity.liquids.get(tile.entity.liquids.current()) < 0.2);
-        // },
+            return tile.entity.liquids.get(liquid) + amount < this.liquidCapacity
+                && (tile.entity.liquids.current() == liquid || tile.entity.liquids.get(tile.entity.liquids.current()) < 0.2);
+        },
         updateTransport(tile, other) {
             var entity = tile.ent();
 
